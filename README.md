@@ -2,6 +2,8 @@ Simple game engine written in python with pygame library.
 Still a work in progress.  
   
 What i want to achieve: 
+- []
+- [x]
  * easy object animation with spritesheets - [x]  
  * collision detection and handling - [ ]  
  * simple physics with speed, acceleration and object bounce - [ ]  
