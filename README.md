@@ -1,6 +1,11 @@
 Simple game engine written in python with pygame library.  
 Still a work in progress.  
   
+### Solar System Exploration, 1950s – 1960s
+
+- [ ] Mercury
+- [x] Venus
+- [x] Earth
 What i want to achieve: 
 - []
 - [x]
