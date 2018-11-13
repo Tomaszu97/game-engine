@@ -36,11 +36,14 @@ class GameObject(Sprite):
 	acceleration		=	Vector2(0,0)
 	rotation			=	0
 	rotation_speed		=	0
+	
 	animation_grid		=	[1,1]	#frames,tracks
 	animation_speed		=	4		#ticks per frame
 	animation_frame		=	0
 	animation_track		=	0
 	animation_counter	=	0
+	animation_paused	=	False
+	
 	display_border		=	False
 	display_id			=	False
 	physical			=	False	#physical=False forces transparent collisions
@@ -55,13 +58,6 @@ class GameObject(Sprite):
 		Sprite.__init__(self)
 		self.id = id
 		
-	def set_spritesheet(self, spritesheet):
-		self.spritesheet = pygame.image.load(spritesheet).convert_alpha()
-		self.size = (self.spritesheet.get_rect().width/self.animation_grid[1], self.spritesheet.get_rect().height/self.animation_grid[0])
-		self.surface = Surface((self.size[0], self.size[1]), pygame.SRCALPHA, 32)
-		self.surface.fill((0,0,0,0))
-		self.surface.blit(self.spritesheet, (0,0), Rect(0,0,self.size[0],self.size[1]))
-		
 	def move(self, x=0, y=0):
 		self.rect.x += x
 		self.rect.y += y 
@@ -73,15 +69,17 @@ class GameObject(Sprite):
 		
 	def every_tick(self):
 		##animate
-		
+		#every tick
 		self.animation_counter += 1
 		if(self.animation_counter >= self.animation_speed):
 			self.animation_counter = 0
-			self.animation_frame += 1
-			if(self.animation_frame >= self.animation_grid[1]):	self.animation_frame = 0;
+			#every frame
+			if not self.animation_paused:
+				self.animation_frame += 1
+				if(self.animation_frame >= self.animation_grid[1]):
+					self.animation_frame = 0;
 			self.surface.fill((0,0,0,0))
 			self.surface.blit(self.spritesheet, (0,0), Rect(self.size[0]*self.animation_frame, self.size[1]*self.animation_track, self.size[0],self.size[1]))
-			print(self.size[0]*self.animation_frame/self.animation_grid[0])
 			
 		##call scheduled functions
 		#move
@@ -107,8 +105,26 @@ class GameObject(Sprite):
 		pass
 	
 	
+	def anim_set_spritesheet(self, spritesheet):
+		self.spritesheet = pygame.image.load(spritesheet).convert_alpha()
+		self.size = (self.spritesheet.get_rect().width/self.animation_grid[1], self.spritesheet.get_rect().height/self.animation_grid[0])
+		self.surface = Surface((self.size[0], self.size[1]), pygame.SRCALPHA, 32)
+		self.surface.fill((0,0,0,0))
+		self.surface.blit(self.spritesheet, (0,0), Rect(0,0,self.size[0],self.size[1]))
+		
+	def anim_change_track(self, track_number):
+		if track_number <= self.animation_grid[1] and track_number >= 0:
+			self.animation_track = track_number
 	
+	def anim_stop(self):
+		self.animation_paused = True
+		self.animation_frame = 0
+		
+	def anim_pause(self):
+		self.animation_paused = True
 	
+	def anim_play(self):
+		self.animation_paused = False
 	
 	"""speed = 5
 	rotation_speed = 0
