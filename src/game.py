@@ -3,6 +3,9 @@ from pygame import *
 from pygame.locals import *
 from game_object import *
 
+#TODO
+#do better than just 1/tick in dt passing
+
 class App:	
 	
 	tick = 60
@@ -23,17 +26,18 @@ class App:
 		go.current_speed = Vector2(0,0)
 		self.objects.append(go)
 		on = GameObject(420)
+		on.acceleration = Vector2(-1,-1)
 		on.anim_set_spritesheet('../data/konon.png')
-		on.current_speed = Vector2(2,1)
+		on.current_speed = Vector2(40,40)
 		self.objects.append(on)
 	
 	def on_event(self, event):
 		if event.type == pygame.QUIT:
 			self._running = False
 			
-	def on_loop(self):
+	def on_loop(self, dt):
 		for object in self.objects:
-			object.every_tick()
+			object.every_tick(dt)
 		
 		##inputs
 		pressed = pygame.key.get_pressed()
@@ -86,7 +90,7 @@ class App:
 			for event in pygame.event.get():
 				self.on_event(event)
 			
-			self.on_loop()
+			self.on_loop(1/self.tick)
 			self.clock.tick(self.tick)
 			self.on_render()
 		

@@ -67,9 +67,8 @@ class GameObject(Sprite):
 		##generate id
 		pass
 		
-	def every_tick(self):
+	def every_tick(self, dt):
 		##animate
-		#every tick
 		self.animation_counter += 1
 		if(self.animation_counter >= self.animation_speed):
 			self.animation_counter = 0
@@ -83,8 +82,9 @@ class GameObject(Sprite):
 			
 		##call scheduled functions
 		#move
-		self.current_speed += self.acceleration
-		self.rect = self.rect.move(self.current_speed)
+		self.current_speed += self.acceleration * dt
+		self.rect = self.rect.move(self.current_speed * dt)
+		print(dt)
 		##collide
 		pass
 		
