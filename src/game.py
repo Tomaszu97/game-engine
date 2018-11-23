@@ -1,11 +1,12 @@
-import pygame
 from pygame import *
 from pygame.locals import *
 from game_object import *
+from player import *
 
 class App:	
 	
-	tick = 60
+	#just leave 120
+	tick = 120
 	clock = Clock()
 	objects = []
 
@@ -17,14 +18,14 @@ class App:
 		self.display = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
 				
 	def on_init(self): 
-		go = GameObject(2137)
+		go = Player(2137)
 		go.animation_grid = [4,8]
 		go.anim_set_spritesheet('../data/scaled_xbr.png')
-		go.current_speed = Vector2(0,0)
 		self.objects.append(go)
+
 		on = GameObject(420)
 		on.anim_set_spritesheet('../data/konon.png')
-		on.current_speed = Vector2(2,1)
+		on.movement_speed_vector = Vector2(2,1)
 		self.objects.append(on)
 	
 	def on_event(self, event):
@@ -32,45 +33,18 @@ class App:
 			self._running = False
 			
 	def on_loop(self):
+		
+		
 		for object in self.objects:
 			object.every_tick()
 		
-		##inputs
-		pressed = pygame.key.get_pressed()
-		any = False
-		if pressed[pygame.K_UP]:
-			self.objects[0].move(0, -self.objects[0].speed/self.tick)
-			self.objects[0].anim_change_track(1)
-			any = True
-			
-		if pressed[pygame.K_DOWN]:
-			self.objects[0].move(0, self.objects[0].speed/self.tick)
-			self.objects[0].anim_change_track(0)
-			any = True
-			
-		if pressed[pygame.K_LEFT]:
-			self.objects[0].move(-self.objects[0].speed/self.tick, 0)
-			self.objects[0].anim_change_track(2)
-			any = True
-			
-		if pressed[pygame.K_RIGHT]:
-			self.objects[0].move(self.objects[0].speed/self.tick, 0)
-			self.objects[0].anim_change_track(3)
-			any = True
-			
-		if any == False:
-			self.objects[0].anim_stop()
-		else:
-			self.objects[0].anim_play()
-		
-		if pressed[pygame.K_ESCAPE]:
-			self.on_cleanup()
+
+
 				
 	def on_render(self):
 		self.display.fill((0,255,0,255))
 		
 		for object in self.objects:
-		##FIX DIS
 			self.display.blit(object.surface, (object.rect.left, object.rect.top))
 			
 		pygame.display.flip()
