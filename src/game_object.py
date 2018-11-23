@@ -54,8 +54,6 @@ class GameObject(Sprite):
 		#behavior
 		self.mass				=	36
 		self.physical			=	False	#physical=False forces transparent collisions
-		self.schedule_periods	=	[]
-		self.schedule_once		=	[]
 		
 
 	def move(self, x=0, y=0):

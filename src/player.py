@@ -1,15 +1,15 @@
-from game_object import ObjectType
-from game_object import GameObject
-import pygame
+from game_object import *
 
 class Player(GameObject):
-	
-	speed   =   3
-
 	def __init__(self, id):
 		super().__init__(id)
 		self.type =	ObjectType.PLAYER
-
+		
+		#object specific
+		self.speed	=	3
+		self.hp		=	100
+		self.mana	=	100
+		#defense and attack depends on equipped stuff
 
 	def every_tick(self):
 		super().every_tick()
