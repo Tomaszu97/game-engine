@@ -11,6 +11,7 @@ class Player(GameObject):
 		self.mana	=	100
 		#defense and attack depends on equipped stuff
 
+
 	def every_tick(self):
 		super().every_tick()
 		self.handle_input()
