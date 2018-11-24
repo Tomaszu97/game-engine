@@ -1,7 +1,6 @@
-from pygame import *
-from pygame.locals import *
-from game_object import *
-from player import *
+from pygame			import	*
+from game_object	import	*
+from player			import	*
 
 class App:	
 	
@@ -25,12 +24,14 @@ class App:
 		go.anim_set_spritesheet('../data/scaled_xbr.png')
 		go.display_border = True
 		go.display_hitbox = True
+		go.display_id = True
 		self.objects.append(go)
 
 		on = GameObject(420)
 		on.anim_set_spritesheet('../data/konon.png')
 		on.display_border = True
 		on.display_hitbox = True
+		on.display_id = True
 		on.movement_speed_vector = Vector2(1,1)
 		self.objects.append(on)
 	

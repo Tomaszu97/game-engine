@@ -1,12 +1,11 @@
-import sys
-from enum import Enum
-from math import floor
-from pygame import *
-from pygame.locals import *
-from pygame.time import *
-from pygame.key import *
-from pygame.sprite import *
-from pygame.surface import *
+from enum			import	Enum
+from math			import	floor
+from pygame			import	*
+from pygame.time	import	*
+from pygame.key		import	*
+from pygame.sprite	import	*
+from pygame.surface import	*
+from pygame.font	import	*
 
 
 class ObjectType(Enum):
@@ -16,6 +15,7 @@ class ObjectType(Enum):
 	ENEMY	=	3
 	SPAWNER	=	4
 	BULLET	=	5
+
 	
 class GameObject(Sprite):
 	
@@ -33,7 +33,9 @@ class GameObject(Sprite):
 		self.display_hitbox		=	False
 		self.display_id			=	False
 		self.surface			=	Surface((0,0), pygame.SRCALPHA, 32)
-		
+		self.font				=	Font('../data/3 Minecraft-Bold.otf', 14 )
+		self.id_surface			=	self.font.render( str('ID:'+str(self.id)), False, Color(0,255,0,255) )
+
 		#position related
 		self.rotation			=	0
 		self.rect				=	Rect((0,0),(0,0))
@@ -72,6 +74,7 @@ class GameObject(Sprite):
 	def on_destroy(self):
 		print('destroyed object')
 		##what to do with children?
+		##KILL ALL OF THEM! >:]
 
 
 	def every_tick(self):
@@ -90,8 +93,9 @@ class GameObject(Sprite):
 			if self.display_hitbox:
    				draw.rect(self.surface, Color(255,0,0,255), Rect(0.1*self.rect.width,0.1*self.rect.height, self.hitbox.width, self.hitbox.height), 1)
 			if self.display_border:
-				draw.rect(self.surface, Color(0,255,0,255), Rect(0,0,self.rect.width, self.rect.height), 1)
-			
+				draw.rect(self.surface, Color(255,255,0,255), Rect(0,0,self.rect.width, self.rect.height), 1)
+			if self.display_id:
+				self.surface.blit(self.id_surface, (0,0))
 
 		##call scheduled functions
 
