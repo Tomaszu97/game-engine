@@ -6,7 +6,7 @@ class Player(GameObject):
 		self.type =	ObjectType.PLAYER
 		
 		#object specific
-		self.speed	=	3
+		self.speed	=	7
 		self.hp		=	100
 		self.mana	=	100
 		#defense and attack depends on equipped stuff

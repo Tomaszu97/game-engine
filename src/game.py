@@ -5,7 +5,7 @@ from player			import	*
 class App:	
 	
 	#just leave 60
-	tick = 60
+	tick = 20
 	clock = Clock()
 	objects = []
 
@@ -13,7 +13,7 @@ class App:
 	def __init__(self):
 		self._running = True
 		self.display = None
-		self.size = self.weight, self.height = 720, 480
+		self.size = self.weight, self.height = 1400, 800
 		pygame.init()
 		self.display = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
 				
@@ -25,6 +25,7 @@ class App:
 		go.display_border = True
 		go.display_hitbox = True
 		go.display_id = True
+		go.movement_speed_vector = Vector2(-1,-2)
 		self.objects.append(go)
 
 		on = GameObject(420)
@@ -32,7 +33,7 @@ class App:
 		on.display_border = True
 		on.display_hitbox = True
 		on.display_id = True
-		on.movement_speed_vector = Vector2(1,1)
+		on.movement_speed_vector = Vector2(2,1)
 		self.objects.append(on)
 	
 

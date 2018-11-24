@@ -34,7 +34,7 @@ class GameObject(Sprite):
 		self.display_id			=	False
 		self.surface			=	Surface((0,0), pygame.SRCALPHA, 32)
 		self.font				=	Font('../data/3 Minecraft-Bold.otf', 14 )
-		self.id_surface			=	self.font.render( str('ID:'+str(self.id)), False, Color(0,255,0,255) )
+		self.id_surface			=	self.font.render( str('ID:'+str(self.id)), False, Color(0,255,0,255), Color(0,0,255,80) )
 
 		#position related
 		self.rotation			=	0
@@ -111,7 +111,43 @@ class GameObject(Sprite):
 	def collide(self, other_game_object):
 		print(self.hitbox)
 		print(other_game_object.hitbox)
-		return self.hitbox.colliderect(other_game_object.hitbox)
+		if not self.hitbox.colliderect(other_game_object.hitbox):
+			return False
+		else:
+			##bounce
+			xdif = (other_game_object.hitbox.left - self.hitbox.left)	#positive means other_game_object is right to self
+			ydif = (other_game_object.hitbox.top - self.hitbox.top)		#positive means other_game_object is down to self
+
+			if abs(ydif) > abs(xdif):
+				#move down
+				if ydif > 0:
+					distance = (ydif - self.hitbox.height)/2
+					self.move(0, distance)
+					other_game_object.move(0, -distance)
+				#move up
+				else:
+					distance = (other_game_object.hitbox.height + ydif)/2
+					self.move(0, distance)
+					other_game_object.move(0, -distance)
+
+			else:
+				#move left
+				if xdif > 0:
+					distance = (xdif - self.hitbox.width)/2
+					self.move(distance, 0)
+					other_game_object.move(-distance, 0)
+				#move right
+				else:
+					distance = (other_game_object.hitbox.width + xdif)/2
+					self.move(distance, 0)
+					other_game_object.move(-distance, 0)
+
+			#other_game_object.move()
+
+
+			return True
+			
+			
 	
 
 	def spawn_child(self):
