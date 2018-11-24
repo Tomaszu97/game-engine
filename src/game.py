@@ -5,8 +5,8 @@ from player import *
 
 class App:	
 	
-	#just leave 120
-	tick = 120
+	#just leave 60
+	tick = 60
 	clock = Clock()
 	objects = []
 
@@ -23,11 +23,15 @@ class App:
 		go = Player(2137)
 		go.animation_grid = [4,8]
 		go.anim_set_spritesheet('../data/scaled_xbr.png')
+		go.display_border = True
+		go.display_hitbox = True
 		self.objects.append(go)
 
 		on = GameObject(420)
 		on.anim_set_spritesheet('../data/konon.png')
-		on.movement_speed_vector = Vector2(2,1)
+		on.display_border = True
+		on.display_hitbox = True
+		on.movement_speed_vector = Vector2(1,1)
 		self.objects.append(on)
 	
 
@@ -39,10 +43,15 @@ class App:
 	def on_loop(self):
 		for object in self.objects:
 			object.every_tick()
+
+		if(self.objects[0].collide(self.objects[1])):
+			print("yas bitch")
+		else:
+			print("no, ni[B][B]a")
 		
 
 	def on_render(self):
-		self.display.fill((0,255,0,255))
+		self.display.fill((0,0,0,255))
 		
 		for object in self.objects:
 			self.display.blit(object.surface, (object.rect.left, object.rect.top))
