@@ -3,7 +3,7 @@ Still a work in progress.
   
 ### What i want to achieve: 
 - [x] easy object animation with spritesheets
-- [ ] collision detection and handling 
+- [X] collision detection
 - [ ] simple physics with speed, acceleration and object bounce
 - [ ] simple object spawning with single line of code
 - [ ] spawners - objects spawning other objects  
