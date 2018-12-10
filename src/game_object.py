@@ -1,5 +1,5 @@
 from enum			import	Enum
-from math			import	floor
+from math			import	floor, ceil
 from pygame			import	*
 from pygame.time	import	*
 from pygame.key		import	*
@@ -18,6 +18,7 @@ class ObjectType(Enum):
 
 	
 class GameObject(Sprite):
+		
 	
 	def __init__(self, id):
 		super().__init__()	
@@ -65,7 +66,6 @@ class GameObject(Sprite):
 		self.hitbox.top		+=	y
 		self.hitbox.left	+=	x
 
-
 	def on_create(self):
 		print('created object')
 		##generate id
@@ -91,11 +91,13 @@ class GameObject(Sprite):
 			self.surface.fill((0,0,0,0))
 			self.surface.blit(self.animation_spritesheet, (0,0), Rect(self.rect.width*self.animation_frame, self.rect.height*self.animation_track, self.rect.width,self.rect.height))
 			if self.display_hitbox:
-   				draw.rect(self.surface, Color(255,0,0,255), Rect(0.1*self.rect.width,0.1*self.rect.height, self.hitbox.width, self.hitbox.height), 1)
+   				draw.rect(self.surface, Color(255,0,0,255), Rect(10, 10, self.hitbox.width, self.hitbox.height), 1)
 			if self.display_border:
 				draw.rect(self.surface, Color(255,255,0,255), Rect(0,0,self.rect.width, self.rect.height), 1)
 			if self.display_id:
 				self.surface.blit(self.id_surface, (0,0))
+
+				
 
 		##call scheduled functions
 
@@ -108,65 +110,92 @@ class GameObject(Sprite):
 		print('object scheduled method')
 	
 	
-	def collide(self, other_game_object):
-		print(self.hitbox)
-		print(other_game_object.hitbox)
-		if not self.hitbox.colliderect(other_game_object.hitbox):
-			return False
-		else:
-			##bounce
-			xdif = (other_game_object.hitbox.left - self.hitbox.left)	#positive means other_game_object is right to self
-			ydif = (other_game_object.hitbox.top - self.hitbox.top)		#positive means other_game_object is down to self
+	def collide(self, other_object):
+		# #calculate relative position
+		xdif = (other_object.hitbox.left + (other_object.hitbox.width/2) - (self.hitbox.left + (self.hitbox.width/2)) ) #positive means other_game_object is right to self
+		ydif = (other_object.hitbox.top + (other_object.hitbox.height/2) - (self.hitbox.top + (self.hitbox.height/2)) )	#positive means other_game_object is down to self
+		#simple sign function
+		sign = lambda number : 1 if number > 0 else (-1 if number < 0 else(0) )
 
-			if abs(ydif) > abs(xdif):
-				#move down
-				if ydif > 0:
-					distance = (ydif - self.hitbox.height)/2
-					self.move(0, distance)
-					other_game_object.move(0, -distance)
-				#move up
-				else:
-					distance = (other_game_object.hitbox.height + ydif)/2
-					self.move(0, distance)
-					other_game_object.move(0, -distance)
+		#self left-top point
+		lt = (self.hitbox.left, self.hitbox.top)
+		#self right-top point
+		rt = (self.hitbox.right, self.hitbox.top)
+		#self left-bottom point
+		lb = (self.hitbox.left, self.hitbox.bottom)
+		#self right-bottom point
+		rb = (self.hitbox.right, self.hitbox.bottom)
+		
+		##optimize it for sure
+		##self approaching other from:
+		if self.id == 36:
+			#left
+			if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+				print('l')
+			#left upper
+			if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+				print('lu')
+			#up
+			if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+				print('u')
+			#right upper
+			if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+				print('ru')
+			#right
+			if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+				print('r')
+			#right bottom
+			if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+				print('rb')
+			#bottom
+			if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+				print('b')
+			#left bottom
+			if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not  other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+				print('lb')
+			#is inside
+			if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+				print('i')
 
-			else:
-				#move left
-				if xdif > 0:
-					distance = (xdif - self.hitbox.width)/2
-					self.move(distance, 0)
-					other_game_object.move(-distance, 0)
-				#move right
-				else:
-					distance = (other_game_object.hitbox.width + xdif)/2
-					self.move(distance, 0)
-					other_game_object.move(-distance, 0)
 
-			#other_game_object.move()
-
-
-			return True
+		# #calculate elastic collision
+		# vel_x_before = self.movement_speed_vector.x
+		# vel_y_before = self.movement_speed_vector.y
+		# other_vel_x_before = other_object.movement_speed_vector.x
+		# other_vel_y_before = other_object.movement_speed_vector.y
+		# vel_x = floor( abs( ( vel_x_before*(self.mass-other_object.mass) + 2*other_object.mass*other_vel_x_before )  / (self.mass + other_object.mass) ) )
+		# vel_y = floor( abs( ( vel_y_before*(self.mass-other_object.mass) + 2*other_object.mass*other_vel_y_before )  / (self.mass + other_object.mass) ) )
+		# other_vel_x = floor( abs( ( other_vel_x_before*(other_object.mass - self.mass) + 2*self.mass*vel_x_before )  / (self.mass + other_object.mass) ) )
+		# other_vel_y = floor( abs( ( other_vel_y_before*(other_object.mass - self.mass) + 2*self.mass*vel_y_before )  / (self.mass + other_object.mass) ) )
 			
 			
-	
-
 	def spawn_child(self):
 		print('spawned a child')
 		pass
 	
+
+	def set_rect(self, rect):
+		self.rect			=	rect
+
+		self.hitbox.width	=	self.rect.width - 20
+		self.hitbox.height	=	self.rect.height - 20
+		self.hitbox.left	=	10 + self.rect.left
+		self.hitbox.top		=	10 + self.rect.top
+		
+		self.surface	=	Surface((rect.width, rect.height), pygame.SRCALPHA, 32)
+
 	
 	def anim_set_spritesheet(self, spritesheet):
 		self.animation_spritesheet	=	pygame.image.load(spritesheet).convert_alpha()
 		
-		self.rect.width		=	floor(self.animation_spritesheet.get_rect().width/self.animation_grid[1])
-		self.rect.height	=	floor(self.animation_spritesheet.get_rect().height/self.animation_grid[0])
-		self.hitbox.width	=	0.8 * self.rect.width
-		self.hitbox.height	=	0.8 * self.rect.height
-		self.hitbox.left	=	0.1 * self.rect.width
-		self.hitbox.top		=	0.1 * self.rect.height
+
+		temp_rect = Rect(0,0,0,0)
+		temp_rect.width		=	floor(self.animation_spritesheet.get_rect().width/self.animation_grid[1])
+		temp_rect.height	=	floor(self.animation_spritesheet.get_rect().height/self.animation_grid[0])
+
+		self.set_rect(temp_rect)
 	
 		self.surface	=	Surface((self.rect.width, self.rect.height), pygame.SRCALPHA, 32)
-
 
 	def anim_change_track(self, track_number):
 		if track_number <= self.animation_grid[1] and track_number >= 0:

@@ -13,8 +13,9 @@ class Player(GameObject):
 
 
 	def every_tick(self):
-		super().every_tick()
 		self.handle_input()
+		super().every_tick()
+		
 
 
 	def handle_input(self):
@@ -24,27 +25,31 @@ class Player(GameObject):
 		if pressed[pygame.K_ESCAPE]:
 				self.on_cleanup()
 
+		speed_vector = Vector2(0,0)
 		any = False
+
 		if pressed[pygame.K_UP]:
-			self.move(0, -self.speed)
+			speed_vector.y -= self.speed
 			self.anim_change_track(1)
 			any = True
 			
 		if pressed[pygame.K_DOWN]:
-			self.move(0, self.speed)
+			speed_vector.y += self.speed
 			self.anim_change_track(0)
 			any = True
 			
 		if pressed[pygame.K_LEFT]:
-			self.move(-self.speed, 0)
+			speed_vector.x -= self.speed
 			self.anim_change_track(2)
 			any = True
 			
 		if pressed[pygame.K_RIGHT]:
-			self.move(self.speed, 0)
+			speed_vector.x += self.speed
 			self.anim_change_track(3)
 			any = True
-			
+		
+		self.movement_speed_vector = speed_vector
+
 		if any == False:
 			self.anim_stop()
 		else:

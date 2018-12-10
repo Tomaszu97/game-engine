@@ -5,7 +5,7 @@ from player			import	*
 class App:	
 	
 	#just leave 60
-	tick = 20
+	tick = 60
 	clock = Clock()
 	objects = []
 
@@ -19,23 +19,61 @@ class App:
 				
 
 	def on_init(self): 
-		go = Player(2137)
+		go = Player(36)
+		go.mass = 36
 		go.animation_grid = [4,8]
 		go.anim_set_spritesheet('../data/scaled_xbr.png')
 		go.display_border = True
 		go.display_hitbox = True
 		go.display_id = True
-		go.movement_speed_vector = Vector2(-1,-2)
+		#go.movement_speed_vector = Vector2(-1,-2)
 		self.objects.append(go)
 
-		on = GameObject(420)
-		on.anim_set_spritesheet('../data/konon.png')
-		on.display_border = True
-		on.display_hitbox = True
-		on.display_id = True
-		on.movement_speed_vector = Vector2(2,1)
-		self.objects.append(on)
-	
+		bottom_wall = GameObject(400)
+		bottom_wall.mass = 369999
+		bottom_wall.set_rect(Rect(600,200,400,100))
+		bottom_wall.display_border = True
+		bottom_wall.display_hitbox = True
+		bottom_wall.display_id = True
+		self.objects.append(bottom_wall)
+
+		"""
+		x = GameObject(59)
+		x.mass = 59
+		x.anim_set_spritesheet('../data/konon.png')
+		x.display_border = True
+		x.display_hitbox = True
+		x.display_id = True
+		x.movement_speed_vector = Vector2(0,0)
+		x.move(900,300)
+		self.objects.append(x)
+
+		left_wall = GameObject(100)
+		left_wall.mass = 369999
+		left_wall.set_rect(Rect(0,0,50,800))
+		left_wall.display_border = True
+		left_wall.display_hitbox = True
+		left_wall.display_id = True
+		self.objects.append(left_wall)
+
+		right_wall = GameObject(200)
+		right_wall.mass = 369999
+		right_wall.set_rect(Rect(0,0,1400,50))
+		right_wall.display_border = True
+		right_wall.display_hitbox = True
+		right_wall.display_id = True
+		self.objects.append(right_wall)
+
+		top_wall = GameObject(300)
+		top_wall.mass = 369999
+		top_wall.set_rect(Rect(1350,0,50,800))
+		top_wall.display_border = True
+		top_wall.display_hitbox = True
+		top_wall.display_id = True
+		self.objects.append(top_wall)
+		"""
+		
+		
 
 	def on_event(self, event):
 		if event.type == pygame.QUIT:
@@ -45,11 +83,14 @@ class App:
 	def on_loop(self):
 		for object in self.objects:
 			object.every_tick()
+			#shitty collision detection O(n!)
+			for other_object in self.objects:
+				if object is not other_object:
+					object.collide(other_object)
+			
 
-		if(self.objects[0].collide(self.objects[1])):
-			print("yas bitch")
-		else:
-			print("no, ni[B][B]a")
+						
+
 		
 
 	def on_render(self):
