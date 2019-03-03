@@ -18,36 +18,34 @@ class ObjectType(Enum):
 
 	
 class GameObject(Sprite):
-		
-	
-	def __init__(self, id):
+	def __init__(self, parent):
 		super().__init__()	
 
 		#identity related
-		self.name			=	'game_object'
-		self.id				=	id
+		self.name			=	'object'
 		self.type			=	ObjectType.NULL
-		self.children_ids	=	[]
+		self.parent = parent
+		self.children	=	[]
 		
 		#look related
 		self.display_border		=	False
 		self.display_hitbox		=	False
-		self.display_id			=	False
+		self.display_name		=	False
 		self.surface			=	Surface((0,0), pygame.SRCALPHA, 32)
 		self.font				=	Font('../data/3 Minecraft-Bold.otf', 14 )
-		self.id_surface			=	self.font.render( str('ID:'+str(self.id)), False, Color(0,255,0,255), Color(0,0,255,80) )
+		self.name_surface			=	self.font.render( self.name, False, Color(0,255,0,255), Color(0,0,255,80) )
 
 		#position related
 		self.rotation			=	0
 		self.rect				=	Rect((0,0),(0,0))
 		self.hitbox				=	Rect((0,0),(0,0))
 
-		#movement related - OK
+		#movement related
 		self.movement_speed_vector		=	Vector2(0,0)
 		self.movement_acceleration		=	Vector2(0,0)
 		self.movement_rotation_speed	=	0
 		
-		#animation related - OK
+		#animation related
 		self.animation_spritesheet	=	Surface((0,0), pygame.SRCALPHA, 32)
 		self.animation_grid			=	[1,1]	#frames,tracks
 		self.animation_speed		=	4		#ticks per frame
@@ -59,22 +57,17 @@ class GameObject(Sprite):
 		#behavior
 		self.mass				=	36
 		self.physical			=	False	#physical=False forces transparent collisions
+
+		#initial
+		self.anim_set_spritesheet('../data/crate.png')
+
+		self.parent.children.append(self)
 		
-	def move(self, x=0, y=0):
+	def move(self, x=0, y=0, rotation=0):
 		self.rect.top		+=	y
 		self.rect.left		+=	x 
 		self.hitbox.top		+=	y
 		self.hitbox.left	+=	x
-
-	def on_create(self):
-		print('created object')
-		##generate id
-		
-
-	def on_destroy(self):
-		print('destroyed object')
-		##what to do with children?
-		##KILL ALL OF THEM! >:]
 
 
 	def every_tick(self):
@@ -94,8 +87,8 @@ class GameObject(Sprite):
    				draw.rect(self.surface, Color(255,0,0,255), Rect(10, 10, self.hitbox.width, self.hitbox.height), 1)
 			if self.display_border:
 				draw.rect(self.surface, Color(255,255,0,255), Rect(0,0,self.rect.width, self.rect.height), 1)
-			if self.display_id:
-				self.surface.blit(self.id_surface, (0,0))
+			if self.display_name:
+				self.surface.blit(self.name_surface, (0,0))
 
 				
 
@@ -127,35 +120,35 @@ class GameObject(Sprite):
 		rb = (self.hitbox.right, self.hitbox.bottom)
 		
 		##optimize it for sure
-		##self approaching other from:
-		if self.id == 36:
-			#left
-			if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-				print('l')
-			#left upper
-			if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-				print('lu')
-			#up
-			if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-				print('u')
-			#right upper
-			if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-				print('ru')
-			#right
-			if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-				print('r')
-			#right bottom
-			if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-				print('rb')
-			#bottom
-			if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-				print('b')
-			#left bottom
-			if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not  other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-				print('lb')
-			#is inside
-			if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-				print('i')
+		# ##self approaching other from:
+		# if self.id == 36:
+		# 	#left
+		# 	if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+		# 		print('l')
+		# 	#left upper
+		# 	if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+		# 		print('lu')
+		# 	#up
+		# 	if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+		# 		print('u')
+		# 	#right upper
+		# 	if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+		# 		print('ru')
+		# 	#right
+		# 	if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+		# 		print('r')
+		# 	#right bottom
+		# 	if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+		# 		print('rb')
+		# 	#bottom
+		# 	if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+		# 		print('b')
+		# 	#left bottom
+		# 	if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not  other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
+		# 		print('lb')
+		# 	#is inside
+		# 	if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
+		# 		print('i')
 
 
 		# #calculate elastic collision
@@ -167,11 +160,6 @@ class GameObject(Sprite):
 		# vel_y = floor( abs( ( vel_y_before*(self.mass-other_object.mass) + 2*other_object.mass*other_vel_y_before )  / (self.mass + other_object.mass) ) )
 		# other_vel_x = floor( abs( ( other_vel_x_before*(other_object.mass - self.mass) + 2*self.mass*vel_x_before )  / (self.mass + other_object.mass) ) )
 		# other_vel_y = floor( abs( ( other_vel_y_before*(other_object.mass - self.mass) + 2*self.mass*vel_y_before )  / (self.mass + other_object.mass) ) )
-			
-			
-	def spawn_child(self):
-		print('spawned a child')
-		pass
 	
 
 	def set_rect(self, rect):
@@ -183,8 +171,8 @@ class GameObject(Sprite):
 		self.hitbox.top		=	10 + self.rect.top
 		
 		self.surface	=	Surface((rect.width, rect.height), pygame.SRCALPHA, 32)
-
 	
+
 	def anim_set_spritesheet(self, spritesheet):
 		self.animation_spritesheet	=	pygame.image.load(spritesheet).convert_alpha()
 		
@@ -196,6 +184,7 @@ class GameObject(Sprite):
 		self.set_rect(temp_rect)
 	
 		self.surface	=	Surface((self.rect.width, self.rect.height), pygame.SRCALPHA, 32)
+
 
 	def anim_change_track(self, track_number):
 		if track_number <= self.animation_grid[1] and track_number >= 0:

@@ -1,6 +1,6 @@
 from game_object import *
 
-class Player(GameObject):
+class Spawner(GameObject):
 	def __init__(self, id):
 		super().__init__(id)
 		self.type =	ObjectType.SPAWNER
@@ -8,3 +8,6 @@ class Player(GameObject):
 		#object specific
 		self.schedule_periods	=	[]
 		self.schedule_once		=	[]
+
+		#dd
+		self.anim_set_spritesheet('../data/spawner.png')
