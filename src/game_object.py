@@ -18,14 +18,14 @@ class ObjectType(Enum):
 
 	
 class GameObject(Sprite):
-	def __init__(self, parent):
+	def __init__(self, parent, x=0, y=0):
 		super().__init__()	
 
 		#identity related
 		self.name			=	'object'
 		self.type			=	ObjectType.NULL
-		self.parent = parent
-		self.children	=	[]
+		self.parent 		= 	parent
+		self.children		=	[]
 		
 		#look related
 		self.display_border		=	False
@@ -37,7 +37,7 @@ class GameObject(Sprite):
 
 		#position related
 		self.rotation			=	0
-		self.rect				=	Rect((0,0),(0,0))
+		self.rect				=	Rect((x,y),(0,0))
 		self.hitbox				=	Rect((0,0),(0,0))
 
 		#movement related
@@ -103,65 +103,33 @@ class GameObject(Sprite):
 		print('object scheduled method')
 	
 	
-	def collide(self, other_object):
-		# #calculate relative position
-		xdif = (other_object.hitbox.left + (other_object.hitbox.width/2) - (self.hitbox.left + (self.hitbox.width/2)) ) #positive means other_game_object is right to self
-		ydif = (other_object.hitbox.top + (other_object.hitbox.height/2) - (self.hitbox.top + (self.hitbox.height/2)) )	#positive means other_game_object is down to self
-		#simple sign function
-		sign = lambda number : 1 if number > 0 else (-1 if number < 0 else(0) )
-
-		#self left-top point
-		lt = (self.hitbox.left, self.hitbox.top)
-		#self right-top point
-		rt = (self.hitbox.right, self.hitbox.top)
-		#self left-bottom point
-		lb = (self.hitbox.left, self.hitbox.bottom)
-		#self right-bottom point
-		rb = (self.hitbox.right, self.hitbox.bottom)
-		
-		##optimize it for sure
-		# ##self approaching other from:
-		# if self.id == 36:
-		# 	#left
-		# 	if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-		# 		print('l')
-		# 	#left upper
-		# 	if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-		# 		print('lu')
-		# 	#up
-		# 	if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-		# 		print('u')
-		# 	#right upper
-		# 	if not other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-		# 		print('ru')
-		# 	#right
-		# 	if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-		# 		print('r')
-		# 	#right bottom
-		# 	if other_object.hitbox.collidepoint(lt) and not other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-		# 		print('rb')
-		# 	#bottom
-		# 	if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-		# 		print('b')
-		# 	#left bottom
-		# 	if not other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and not  other_object.hitbox.collidepoint(rb) and not other_object.hitbox.collidepoint(lb):
-		# 		print('lb')
-		# 	#is inside
-		# 	if other_object.hitbox.collidepoint(lt) and other_object.hitbox.collidepoint(rt) and other_object.hitbox.collidepoint(rb) and other_object.hitbox.collidepoint(lb):
-		# 		print('i')
-
-
-		# #calculate elastic collision
-		# vel_x_before = self.movement_speed_vector.x
-		# vel_y_before = self.movement_speed_vector.y
-		# other_vel_x_before = other_object.movement_speed_vector.x
-		# other_vel_y_before = other_object.movement_speed_vector.y
-		# vel_x = floor( abs( ( vel_x_before*(self.mass-other_object.mass) + 2*other_object.mass*other_vel_x_before )  / (self.mass + other_object.mass) ) )
-		# vel_y = floor( abs( ( vel_y_before*(self.mass-other_object.mass) + 2*other_object.mass*other_vel_y_before )  / (self.mass + other_object.mass) ) )
-		# other_vel_x = floor( abs( ( other_vel_x_before*(other_object.mass - self.mass) + 2*self.mass*vel_x_before )  / (self.mass + other_object.mass) ) )
-		# other_vel_y = floor( abs( ( other_vel_y_before*(other_object.mass - self.mass) + 2*self.mass*vel_y_before )  / (self.mass + other_object.mass) ) )
-	
-
+	def collide(self, other_object):       
+		selfcenter = (self.hitbox.left + self.hitbox.width/2 , self.hitbox.top + self.hitbox.height/2)
+		othercenter = (other_object.hitbox.left + other_object.hitbox.width/2, other_object.hitbox.top + other_object.hitbox.height/2)
+	   
+		#transform to S(0,0)
+		selfcenter = (selfcenter[0]-othercenter[0], selfcenter[1]-othercenter[1])
+	   
+		#linear function transform
+		factor = other_object.hitbox.height / other_object.hitbox.width
+	   
+		#needs optimization
+		if self.name == 'player' and self.hitbox.colliderect(other_object.hitbox):
+			if selfcenter[1] > selfcenter[0]*factor:
+				if selfcenter[1] > -selfcenter[0]*factor:
+					self.move(0, (other_object.hitbox.height-self.hitbox.top+other_object.hitbox.top)/2)
+					other_object.move(0, -(other_object.hitbox.height-self.hitbox.top+other_object.hitbox.top)/2)
+				else:
+					self.move(-(self.hitbox.width-other_object.hitbox.left + self.hitbox.left)/2 , 0)
+					other_object.move((self.hitbox.width-other_object.hitbox.left + self.hitbox.left)/2, 0)
+			else:
+				if selfcenter[1] > -selfcenter[0]*factor:
+					self.move((other_object.hitbox.width-self.hitbox.left + other_object.hitbox.left)/2 , 0)
+					other_object.move(-(other_object.hitbox.width-self.hitbox.left + other_object.hitbox.left)/2, 0)
+				else:
+					self.move(0, -(self.hitbox.height-other_object.hitbox.top+self.hitbox.top)/2)
+					other_object.move(0, (self.hitbox.height-other_object.hitbox.top+self.hitbox.top)/2)
+					
 	def set_rect(self, rect):
 		self.rect			=	rect
 

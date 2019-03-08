@@ -1,9 +1,11 @@
 from game_object import *
 from bullet import *
+import math
 
 class Player(GameObject):
 	def __init__(self, parent):
 		super().__init__(parent)
+		self.clock1 = Clock()
 		self.type =	ObjectType.PLAYER
 		
 		#object specific
@@ -12,6 +14,7 @@ class Player(GameObject):
 		self.mass = 36
 		self.hp		=	100
 		self.mana	=	100
+
 		
 		#TODO - delete this - temporary
 		self.animation_grid = [4,8]
@@ -20,6 +23,10 @@ class Player(GameObject):
 		self.display_hitbox = True
 		self.display_name = True
 		self.movement_speed_vector = Vector2(1,2)
+
+		
+
+		self.bullet_timer = .3
 
 
 	def every_tick(self):
@@ -30,8 +37,11 @@ class Player(GameObject):
 
 	def handle_input(self):
 			
+		dt = self.clock1.tick(75) / 1000
 		pressed = pygame.key.get_pressed()
 		mouse_pressed = pygame.mouse.get_pressed()
+
+		self.bullet_timer -= dt
 		
 		if pressed[pygame.K_ESCAPE]:
 				self.on_cleanup()
@@ -66,9 +76,15 @@ class Player(GameObject):
 		else:
 			self.anim_play()
 
-		if mouse_pressed[0]:
-			self.shoot()
+		if self.bullet_timer <= 0:
+			if mouse_pressed[0]:
+				self.shoot()
 
 
 	def shoot(self):
-		Bullet(self)
+		xa, ya = Vector2(pygame.mouse.get_pos()) - self.rect.center
+		angle = math.degrees(math.atan2(xa, ya))	
+		y = Bullet(self, self.rect.x, self.rect.y)
+		y.surface = pygame.transform.rotate(y.original_surf, angle)
+		y.movement_speed_vector = Vector2(xa//10, ya//10)
+		self.bullet_timer = .3
