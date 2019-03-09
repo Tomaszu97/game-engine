@@ -1,4 +1,5 @@
 from game_object import *
+from shared import *
 
 class Spawner(GameObject):
 	def __init__(self, id):

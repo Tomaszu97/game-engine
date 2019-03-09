@@ -1,9 +1,10 @@
 from game_object import *
 from bullet import *
+from shared import *
 import math
 
 class Player(GameObject):
-	def __init__(self, parent):
+	def __init__(self, parent = None):
 		super().__init__(parent)
 		self.clock1 = Clock()
 		self.type =	ObjectType.PLAYER
@@ -19,9 +20,6 @@ class Player(GameObject):
 		#TODO - delete this - temporary
 		self.animation_grid = [4,8]
 		self.anim_set_spritesheet('../data/scaled_xbr.png')
-		self.display_border = True
-		self.display_hitbox = True
-		self.display_name = True
 		self.movement_speed_vector = Vector2(1,2)
 
 		
@@ -40,7 +38,6 @@ class Player(GameObject):
 		dt = self.clock1.tick(75) / 1000
 		pressed = pygame.key.get_pressed()
 		mouse_pressed = pygame.mouse.get_pressed()
-
 		self.bullet_timer -= dt
 		
 		if pressed[pygame.K_ESCAPE]:
@@ -49,22 +46,22 @@ class Player(GameObject):
 		speed_vector = Vector2(0,0)
 		any = False
 
-		if pressed[pygame.K_UP]:
+		if pressed[pygame.K_w]:
 			speed_vector.y -= self.speed
 			self.anim_change_track(1)
 			any = True
 			
-		if pressed[pygame.K_DOWN]:
+		if pressed[pygame.K_s]:
 			speed_vector.y += self.speed
 			self.anim_change_track(0)
 			any = True
 			
-		if pressed[pygame.K_LEFT]:
+		if pressed[pygame.K_a]:
 			speed_vector.x -= self.speed
 			self.anim_change_track(2)
 			any = True
 			
-		if pressed[pygame.K_RIGHT]:
+		if pressed[pygame.K_d]:
 			speed_vector.x += self.speed
 			self.anim_change_track(3)
 			any = True
@@ -83,8 +80,14 @@ class Player(GameObject):
 
 	def shoot(self):
 		xa, ya = Vector2(pygame.mouse.get_pos()) - self.rect.center
-		angle = math.degrees(math.atan2(xa, ya))	
-		y = Bullet(self, self.rect.x, self.rect.y)
-		y.surface = pygame.transform.rotate(y.original_surf, angle)
-		y.movement_speed_vector = Vector2(xa//10, ya//10)
+		#angle = math.degrees(math.atan2(xa, ya))	
+
+		y = Bullet(self, self.rect.center[0], self.rect.center[1])
+		try:
+			y.movement_speed_vector = Vector2(Vector2(xa, ya).normalize().x*8, Vector2(xa, ya).normalize().y*8)
+			y.move(y.movement_speed_vector.normalize().x*Vector2(self.rect.size).length() -y.rect.width/2 , y.movement_speed_vector.normalize().y*Vector2(self.rect.size).length() -y.rect.height/2)	
+		except ValueError:
+			y.kill()
+
 		self.bullet_timer = .3
+		

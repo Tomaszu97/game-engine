@@ -1,19 +1,19 @@
 from game_object import *
+from shared import *
 
 class Bullet(GameObject):
-	def __init__(self, parent, x, y):
+	def __init__(self, parent = None, x=0, y=0):
 		super().__init__(parent, x, y)
-		self.type =	ObjectType.BULLET
-		self.original_surf = self.surface
-		self.anim_set_spritesheet('../data/bullet.png')
-		self.animation_grid = [1,1]
 
-		self.move(x, y)
+		self.type =	ObjectType.BULLET
+
+
+		self.animation_grid			=	[1,5]	#always before setting spritesheet
+		self.animation_speed		=   10
+		self.anim_set_spritesheet('../data/bullet.png')
+		
+		
 
 		#object specific
 		damage  =   36
 		
-		self.movement_speed_vector = Vector2(0,2)
-	
-		def every_tick():
-			super().every_tick()
