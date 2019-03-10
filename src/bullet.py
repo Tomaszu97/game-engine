@@ -10,7 +10,7 @@ class Bullet(GameObject):
 
 		self.animation_grid			=	[1,5]	#always before setting spritesheet
 		self.animation_speed		=   10
-		self.anim_set_spritesheet('../data/bullet.png')
+		self.anim_set_spritesheet('../data/bomb.png')
 		
 		
 

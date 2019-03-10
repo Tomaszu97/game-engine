@@ -72,8 +72,8 @@ class App():
 Thread(target=App).start()
 time.sleep(0.5)
 
-mixer_music.load('../data/kirbys_theme.mp3')
-#mixer_music.play()
+mixer_music.load('../data/loop.ogg')
+mixer_music.play(loops = -1)
 
 
 
