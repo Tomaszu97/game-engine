@@ -15,4 +15,5 @@ class Bullet(GameObject):
 		#object specific
 		self.damage		=	36
 		self.speed		=	10
+		self.acceleration	=	0
 		

@@ -68,17 +68,22 @@ class Player(GameObject):
 
 
 	def shoot(self):
-		shooting_vector = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))
-		#create bullet
+		#create bullet in the middle of player
 		bullet = Bullet(self)
 		bullet.move( (self.position+(self.size/2) - bullet.size/2))
 		
-		
+		#can use reversing bullets :O
+		bullet.speed = 15
+		#bullet.acceleration = -0.2
 
+		#calculate where to shoot
+		shooting_direction = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))
+		shooting_direction = shooting_direction.normalize()
 		try:
-			bullet.movement_speed = shooting_vector.normalize()*bullet.speed
+			bullet.movement_speed = shooting_direction*bullet.speed
+			bullet.movement_acceleration = shooting_direction*bullet.acceleration
 			q = Vector2()
-			q.from_polar(( self.hitbox_size.length()/2 + bullet.hitbox_size.length()/2,  shooting_vector.as_polar()[1]))
+			q.from_polar(( self.hitbox_size.length()/2 + bullet.hitbox_size.length()/2,  shooting_direction.as_polar()[1]))
 			bullet.move(q)
 		except ValueError:
 			y.kill()
