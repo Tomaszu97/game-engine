@@ -1,4 +1,4 @@
 all_objects = []
 display_hitboxes = True
 display_borders = True
-display_names = False
+display_names = True

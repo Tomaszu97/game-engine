@@ -89,5 +89,5 @@ class Player(GameObject):
 		except ValueError:
 			y.kill()
 
-		self.bullet_timer = .05
+		self.bullet_timer = .1
 		

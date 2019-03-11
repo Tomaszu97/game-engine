@@ -85,6 +85,7 @@ for i in range(5):
 	f = 120*(i+1)
 	for j in range(5):
 		q = GameObject()
+		q.set_animation_spritesheet('../data/konon.png')
 		q.move(Vector2(f, j*120))
 
 
