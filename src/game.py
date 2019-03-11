@@ -10,9 +10,9 @@ app = None
 
 class App():
 	def __init__(self):
-		self.children = []
 		global app
 		app = self
+		self.children = []
 
 		self.tick = 75
 		self.clock = Clock()
@@ -30,15 +30,16 @@ class App():
 
 	def loop(self):
 		to_destroy = []
+		#TODO - collide only required objects (physical = True) and do it until there are no collisions left
 		for object in all_objects:
 			object.every_tick()
 			for other_object in all_objects:
 				if object is not other_object:
 					object.collide(other_object)
 			
-			#kill object if out of bounds
+			#kill object if out of bounds (never kill player)
 			w, h = pygame.display.get_surface().get_size()
-			if not ( object.rect.left in range(-object.rect.width, w) and object.rect.top in range(-object.rect.height, h) ):
+			if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != ObjectType.PLAYER:
 				object.kill()
 
 
@@ -48,9 +49,8 @@ class App():
 		self.surface.fill((0,0,90,255))
 		
 		for object in all_objects:
-			self.surface.blit(object.surface, (object.rect.left, object.rect.top))
+			self.surface.blit(object.surface, (object.position.x, object.position.y))
 				
-
 		pygame.display.flip()
 		
 
@@ -76,12 +76,11 @@ mixer_music.load('../data/loop.ogg')
 mixer_music.play(loops = -1)
 
 
-
 for i in range(5):
 	f = 120*(i+1)
 	for j in range(5):
 		q = GameObject()
-		q.move(f, j*120)
+		q.move(Vector2(f, j*120))
 
 
 x = Player(app)

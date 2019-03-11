@@ -20,7 +20,7 @@ class ObjectType(Enum):
 
 	
 class GameObject(Sprite):
-	def __init__(self, parent = None, x=0, y=0):
+	def __init__(self, parent=None, position = Vector2(0.0, 0.0)):
 		super().__init__()	
 
 		#identity related
@@ -33,45 +33,46 @@ class GameObject(Sprite):
 		self.surface			=	Surface((0,0), pygame.SRCALPHA, 32)
 		self.font				=	Font('../data/3 Minecraft-Bold.otf', 14 )
 
-		#position related
-		self.rotation			=	0
-		self.rect				=	Rect((x,y),(0,0))
-		self.hitbox				=	Rect((0,0),(0,0))
+		#size/position related
+		self.rotation			=	0.0
+		self.position			=	Vector2(position)
+		self.size				=	Vector2(0.0, 0.0)
+		self.hitbox_position	=	Vector2(0.0, 0.0)
+		self.hitbox_size		=	Vector2(0.0, 0.0)
+		self.hitbox_offset		=	0.0
 
 		#movement related
-		self.movement_speed_vector		=	Vector2(0,0)
+		self.movement_speed				=	Vector2(0,0)
 		self.movement_acceleration		=	Vector2(0,0)
-		self.movement_rotation_speed	=	0
+		self.movement_angular_speed		=	0.0
 		
 		#animation related
 		self.animation_spritesheet	=	Surface((0,0), pygame.SRCALPHA, 32)
-		self.animation_grid			=	[1,1]	#frames,tracks
+		self.animation_grid			=	(1,1)	#frames,tracks
 		self.animation_speed		=	4		#ticks per frame
 		self.animation_frame		=	0
 		self.animation_track		=	0
 		self.animation_counter		=	0
 		self.animation_paused		=	False
 		
-		#behavior
+		#collision behavior
 		self.mass				=	36
-		self.physical			=	False	#physical=False forces transparent collisions
+		self.physical			=	False	#True to collide
+		
+		#drawing order
+		self.layer				=	10
 
-		#initial
-		self.anim_set_spritesheet('../data/crate.png')
-
-		self.display_border = True
-		self.display_hitbox = True
-		self.display_name = True
-
+		#append to lists
 		if self.parent != None:
 			self.parent.children.append(self)
 		all_objects.append(self)
+
+		#initial
+		self.set_animation_spritesheet('../data/crate.png')
 		
-	def move(self, x=0, y=0, rotation=0):
-		self.rect.top		+=	y
-		self.rect.left		+=	x 
-		self.hitbox.top		+=	y
-		self.hitbox.left	+=	x
+	def move(self, movement_vector):
+		self.position += movement_vector
+		self.hitbox_position = self.position + Vector2(self.hitbox_offset, self.hitbox_offset)
 
 
 	def every_tick(self):
@@ -86,96 +87,86 @@ class GameObject(Sprite):
 					self.animation_frame = 0;
 			#redraw spritesheet to self.surface (+ optional hitbox + optional border)
 			self.surface.fill((0,0,0,0))
-			self.surface.blit(self.animation_spritesheet, (0,0), Rect(self.rect.width*self.animation_frame, self.rect.height*self.animation_track, self.rect.width,self.rect.height))
-			if display_hitboxes:
-   				draw.rect(self.surface, Color(255,0,0,255), Rect((self.rect.width-self.hitbox.width)/2, (self.rect.height-self.hitbox.height)/2, self.hitbox.width, self.hitbox.height), 1)
+			self.surface.blit(self.animation_spritesheet, (0,0), Rect(self.size.x*self.animation_frame, self.size.y*self.animation_track, self.size.x, self.size.y))
+			
 			if display_borders:
-				draw.rect(self.surface, Color(255,255,0,255), Rect(0,0,self.rect.width, self.rect.height), 1)
+				draw.rect(self.surface, Color(255,255,0,255), Rect(0,0,self.size.x, self.size.y), 1)
+			if display_hitboxes:
+   				draw.rect(self.surface, Color(255,0,0,255), Rect(self.hitbox_offset, self.hitbox_offset, self.hitbox_size.x, self.hitbox_size.y) , 1)
 			if display_names:
 				self.surface.blit(self.font.render( self.name, False, Color(0,255,0,255), Color(0,0,255,80) ), (0,0))
 
-				
-
-		##call scheduled functions
-
 		##move
-		self.movement_speed_vector += self.movement_acceleration
-		self.move(self.movement_speed_vector.x, self.movement_speed_vector.y)
+		self.move(self.movement_speed)
+		self.movement_speed += self.movement_acceleration
 		
-		
-	def schedule(self, period, once=False):
-		print('object scheduled method')
-	
-	
-	def collide(self, other_object):       
-		selfcenter = (self.hitbox.left + self.hitbox.width/2 , self.hitbox.top + self.hitbox.height/2)
-		othercenter = (other_object.hitbox.left + other_object.hitbox.width/2, other_object.hitbox.top + other_object.hitbox.height/2)
-	   
-		#transform to S(0,0)
-		selfcenter = (selfcenter[0]-othercenter[0], selfcenter[1]-othercenter[1])
-	   
-		#linear function transform
-		factor = other_object.hitbox.height / other_object.hitbox.width
-	   
-		#needs optimization
-		if self.hitbox.colliderect(other_object.hitbox):
-			if selfcenter[1] > selfcenter[0]*factor:
-				if selfcenter[1] > -selfcenter[0]*factor:
-					self.move(0, (other_object.hitbox.height-self.hitbox.top+other_object.hitbox.top)/2)
-					other_object.move(0, -(other_object.hitbox.height-self.hitbox.top+other_object.hitbox.top)/2)
-				else:
-					self.move(-(self.hitbox.width-other_object.hitbox.left + self.hitbox.left)/2 , 0)
-					other_object.move((self.hitbox.width-other_object.hitbox.left + self.hitbox.left)/2, 0)
-			else:
-				if selfcenter[1] > -selfcenter[0]*factor:
-					self.move((other_object.hitbox.width-self.hitbox.left + other_object.hitbox.left)/2 , 0)
-					other_object.move(-(other_object.hitbox.width-self.hitbox.left + other_object.hitbox.left)/2, 0)
-				else:
-					self.move(0, -(self.hitbox.height-other_object.hitbox.top+self.hitbox.top)/2)
-					other_object.move(0, (self.hitbox.height-other_object.hitbox.top+self.hitbox.top)/2)
-					
-	def set_rect(self, rect, hitbox_offset = 0):
-		self.rect			=	rect
 
-		self.hitbox.width	=	self.rect.width - 2*hitbox_offset
-		self.hitbox.height	=	self.rect.height - 2*hitbox_offset
-		self.hitbox.left	=	self.rect.left + hitbox_offset
-		self.hitbox.top		=	self.rect.top + hitbox_offset
+	def collide(self, other_object):       
+		relative_position = self.position + (self.size/2)
+		othercenter = other_object.position + (other_object.size/2)
+		relative_position = relative_position - othercenter
+
+		#dont collide if object width or height is 0
+		if other_object.hitbox_size.x == 0 or other_object.hitbox_size.y == 0:
+			return
+
+		factor = other_object.hitbox_size.y / other_object.hitbox_size.x
 		
-		self.surface	=	Surface((rect.width, rect.height), pygame.SRCALPHA, 32)
+	   
+		displacement = Vector2(0.0,0.0)
+		if Rect(self.hitbox_position, self.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
+			if relative_position.y > relative_position.x*factor:
+				#approach from below
+				if relative_position.y > -relative_position.x*factor:
+					displacement = Vector2(0, (other_object.hitbox_size.y-self.hitbox_position.y+other_object.hitbox_position.y)/2)
+				#from the left hand side
+				else:
+					displacement = -Vector2((self.hitbox_size.x-other_object.hitbox_position.x+self.hitbox_position.x)/2, 0)			
+			else:
+				#from the right hand side
+				if relative_position.y > -relative_position.x*factor:
+					displacement = Vector2((other_object.hitbox_size.x-self.hitbox_position.x + other_object.hitbox_position.x)/2 , 0)				
+				#from above
+				else:
+					displacement = -Vector2(0, (self.hitbox_size.y-other_object.hitbox_position.y+self.hitbox_position.y)/2)
+			
+			#move both objects
+			self.move(displacement)
+			other_object.move(-displacement)
+					
+
+	def set_size(self, size):
+		self.size = size
+		self.set_hitbox_offset(self.hitbox_offset)
+
 
 	def set_hitbox_offset(self, offset):
-		self.set_rect(self.rect, offset)
+		self.hitbox_offset = offset
+		self.hitbox_position = self.position + Vector2(offset, offset)
+		self.hitbox_size = self.size - Vector2(2*offset, 2*offset)
 	
 
-	def anim_set_spritesheet(self, spritesheet):
+	def set_animation_spritesheet(self, spritesheet):
 		self.animation_spritesheet	=	pygame.image.load(spritesheet).convert_alpha()
-		
-
-		temp_rect = Rect(self.rect.x,self.rect.y,0,0)
-		temp_rect.width		=	floor(self.animation_spritesheet.get_rect().width/self.animation_grid[1])
-		temp_rect.height	=	floor(self.animation_spritesheet.get_rect().height/self.animation_grid[0])
-
-		self.set_rect(temp_rect)
-	
-		self.surface	=	Surface((self.rect.width, self.rect.height), pygame.SRCALPHA, 32)
+		self.set_size(Vector2(self.animation_spritesheet.get_rect().width/self.animation_grid[1], self.animation_spritesheet.get_rect().height/self.animation_grid[0]))
+		self.surface	=	Surface((self.size.x, self.size.y), pygame.SRCALPHA, 32)
 
 
-	def anim_change_track(self, track_number):
+	def change_animation_track(self, track_number):
 		if track_number <= self.animation_grid[1] and track_number >= 0:
 			self.animation_track = track_number
 	
 
-	def anim_stop(self):
+	def animation_stop(self):
 		self.animation_paused = True
 		self.animation_frame = 0
 
 
-	def anim_pause(self):
+	def animation_pause(self):
 		self.animation_paused = True
 	
 
-	def anim_play(self):
+	def animation_play(self):
 		self.animation_paused = False
 
 	def kill(self):
