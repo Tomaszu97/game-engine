@@ -5,6 +5,7 @@ from spawner		import	*
 from shared import *
 from threading import Thread
 import time
+import random
 
 app = None
 
@@ -70,9 +71,13 @@ class App():
 		
 
 Thread(target=App).start()
-time.sleep(0.5)
+time.sleep(0.7)
 
-mixer_music.load('../data/loop.ogg')
+x = random.randint(0,1)
+if x == 0:
+	mixer_music.load('../data/loop.ogg')
+if x == 1:
+	mixer_music.load('../data/loop2.ogg')
 mixer_music.play(loops = -1)
 
 

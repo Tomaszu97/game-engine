@@ -73,12 +73,13 @@ class Player(GameObject):
 		bullet.move( (self.position+(self.size/2) - bullet.size/2))
 		
 		#can use reversing bullets :O
-		bullet.speed = 15
+		bullet.speed = 10
 		#bullet.acceleration = -0.2
 
 		#calculate where to shoot
 		shooting_direction = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))
 		shooting_direction = shooting_direction.normalize()
+
 		try:
 			bullet.movement_speed = shooting_direction*bullet.speed
 			bullet.movement_acceleration = shooting_direction*bullet.acceleration
