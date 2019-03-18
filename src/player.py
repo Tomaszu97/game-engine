@@ -8,17 +8,16 @@ class Player(GameObject):
 		super().__init__(parent, position)
 		self.type =	ObjectType.PLAYER
 		self.name = 'player'
+		self.animation_grid = [4,8]
+		self.set_animation_spritesheet('../data/scaled_xbr.png')
+		self.mass = 70
 
+		#object specific
 		self.clock1 = Clock()
 		self.bullet_timer = .3
 		self.speed	=	7
-		self.mass = 36
 		self.hp		=	100
 		self.mana	=	100
-		
-		#initial
-		self.animation_grid = [4,8]
-		self.set_animation_spritesheet('../data/scaled_xbr.png')
 		
 
 	def every_tick(self):
@@ -27,7 +26,10 @@ class Player(GameObject):
 		
 
 	def handle_input(self):
-		dt = self.clock1.tick(75) / 1000
+		try:
+			dt = self.clock1.tick(75) / 1000
+		except:
+			return
 		pressed = pygame.key.get_pressed()
 		mouse_pressed = pygame.mouse.get_pressed()
 		self.bullet_timer -= dt
@@ -74,7 +76,7 @@ class Player(GameObject):
 		
 		#can use reversing bullets :O
 		bullet.speed = 10
-		#bullet.acceleration = -0.2
+		# bullet.acceleration = -0.2
 
 		#calculate where to shoot
 		shooting_direction = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))
@@ -89,5 +91,5 @@ class Player(GameObject):
 		except ValueError:
 			y.kill()
 
-		self.bullet_timer = .1
+		self.bullet_timer = .05
 		

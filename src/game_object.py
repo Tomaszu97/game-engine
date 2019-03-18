@@ -12,11 +12,13 @@ from shared import *
 
 class ObjectType(Enum):
 	NULL	=	0
-	PLAYER	=	1
-	ALLY	=	2
-	ENEMY	=	3
-	SPAWNER	=	4
-	BULLET	=	5
+	PLAYER		=	1
+	ALLY		=	2
+	ENEMY		=	3
+	SPAWNER		=	4
+	BULLET		=	5
+	CONTAINER	=	6
+	DECORATION	=	7
 
 	
 class GameObject(Sprite):
@@ -56,11 +58,9 @@ class GameObject(Sprite):
 		self.animation_paused		=	False
 		
 		#collision behavior
-		self.mass				=	36
-		self.physical			=	False	#True to collide
+		self.mass				=	100
+		self.layer				=	0
 		
-		#drawing order
-		self.layer				=	10
 
 		#append to lists
 		if self.parent != None:
@@ -111,28 +111,45 @@ class GameObject(Sprite):
 			return
 
 		factor = other_object.hitbox_size.y / other_object.hitbox_size.x
-		
-	   
 		displacement = Vector2(0.0,0.0)
+		
+		#mass_ratio = self.mass / (self.mass + other_object.mass)
+
+		#bounce both objects
 		if Rect(self.hitbox_position, self.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
 			if relative_position.y > relative_position.x*factor:
 				#approach from below
 				if relative_position.y > -relative_position.x*factor:
 					displacement = Vector2(0, (other_object.hitbox_size.y-self.hitbox_position.y+other_object.hitbox_position.y)/2)
+					self.movement_speed.y = -self.movement_speed.y
+					other_object.movement_speed.y = -other_object.movement_speed.y
 				#from the left hand side
 				else:
-					displacement = -Vector2((self.hitbox_size.x-other_object.hitbox_position.x+self.hitbox_position.x)/2, 0)			
+					displacement = -Vector2((self.hitbox_size.x-other_object.hitbox_position.x+self.hitbox_position.x)/2, 0)
+					self.movement_speed.x = -self.movement_speed.x
+					other_object.movement_speed.x = -other_object.movement_speed.x	
 			else:
 				#from the right hand side
 				if relative_position.y > -relative_position.x*factor:
-					displacement = Vector2((other_object.hitbox_size.x-self.hitbox_position.x + other_object.hitbox_position.x)/2 , 0)				
+					displacement = Vector2((other_object.hitbox_size.x-self.hitbox_position.x + other_object.hitbox_position.x)/2 , 0)
+					self.movement_speed.x = -self.movement_speed.x
+					other_object.movement_speed.x = -other_object.movement_speed.x		
 				#from above
 				else:
 					displacement = -Vector2(0, (self.hitbox_size.y-other_object.hitbox_position.y+self.hitbox_position.y)/2)
+					self.movement_speed.y = -self.movement_speed.y
+					other_object.movement_speed.y = -other_object.movement_speed.y
 			
+
+
+
 			#move both objects
 			self.move(displacement)
 			other_object.move(-displacement)
+
+			return True
+
+		return False
 					
 
 	def set_size(self, size):

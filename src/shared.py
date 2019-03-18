@@ -1,4 +1,6 @@
-all_objects = []
-display_hitboxes = True
-display_borders = True
-display_names = True
+all_objects         =   []
+display_hitboxes    =   False
+display_borders     =   False
+display_names       =   False
+window_size         =   (950, 1000)
+window_position     =   (5, 35)

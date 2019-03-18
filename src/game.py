@@ -2,10 +2,12 @@ from pygame			import	*
 from game_object	import	*
 from player			import	*
 from spawner		import	*
-from shared import *
-from threading import Thread
+from decoration		import	*
+from shared			import *
+from threading 		import Thread
 import time
 import random
+import os
 
 app = None
 
@@ -18,7 +20,9 @@ class App():
 		self.tick = 75
 		self.clock = Clock()
 		self.running = True
-		self.surface = pygame.display.set_mode((1200, 700), HWSURFACE | pygame.DOUBLEBUF)
+		
+		os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (window_position[0], window_position[1])
+		self.surface = pygame.display.set_mode((window_size[0], window_size[1]), HWSURFACE | pygame.DOUBLEBUF)
 		pygame.init()
 		
 		self.run()
@@ -30,28 +34,43 @@ class App():
 			
 
 	def loop(self):
-		to_destroy = []
-		#TODO - collide only required objects (physical = True) and do it until there are no collisions left
+		to_collide = []
+
 		for object in all_objects:
-			object.every_tick()
-			for other_object in all_objects:
-				if object is not other_object:
-					object.collide(other_object)
-			
-			#kill object if out of bounds (never kill player)
+			#TODO - kill object if out of bounds (except player) - rethink this
 			w, h = pygame.display.get_surface().get_size()
 			if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != ObjectType.PLAYER:
 				object.kill()
+
+			object.every_tick()
+			
+			if object.layer == 0:
+				to_collide.append(object)
+
+
+		for object in to_collide:
+			for other_object in to_collide:
+				if object is not other_object:
+					object.collide(other_object)
+
+			
+			
 
 
 			
 
 	def render(self):
 		self.surface.fill((0,0,90,255))
-		
-		for object in all_objects:
-			self.surface.blit(object.surface, (object.position.x, object.position.y))
-				
+ 
+		try:
+			#draw object in layered order
+			for layer in range(min(object.layer for object in all_objects), max(object.layer for object in all_objects)+1):
+				for object in all_objects:
+					if object.layer == layer:
+						self.surface.blit(object.surface, (object.position.x, object.position.y))
+		except ValueError:
+			pass
+
 		pygame.display.flip()
 		
 
@@ -71,7 +90,10 @@ class App():
 		
 
 Thread(target=App).start()
-time.sleep(0.7)
+time.sleep(1)
+
+###########################################
+
 
 x = random.randint(0,1)
 if x == 0:
@@ -84,10 +106,22 @@ mixer_music.play(loops = -1)
 for i in range(5):
 	f = 120*(i+1)
 	for j in range(5):
-		q = GameObject()
+		q = Decoration()
+		q.move(Vector2(f, j*120))
+
+for i in range(5):
+	f = 120*(i+1)
+	for j in range(5):
+		q = Decoration()
+		q.layer = 10
 		q.set_animation_spritesheet('../data/konon.png')
 		q.move(Vector2(f, j*120))
 
+for i in range(5):
+	f = 120*(i+1) + 200
+	for j in range(5):
+		q = GameObject()
+		q.move(Vector2(f, j*120))
 
 x = Player(app)
 x.name = 'player1'
