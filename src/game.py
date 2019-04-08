@@ -17,7 +17,7 @@ class App():
 		app = self
 		self.children = []
 
-		self.tick = 75
+		self.tick = tick
 		self.clock = Clock()
 		self.running = True
 		
@@ -47,7 +47,7 @@ class App():
 			if object.layer == 0:
 				to_collide.append(object)
 
-
+		#collisions
 		for object in to_collide:
 			for other_object in to_collide:
 				if object is not other_object:
@@ -95,27 +95,31 @@ time.sleep(1)
 ###########################################
 
 
-x = random.randint(0,1)
+x = random.randint(0,3)
 if x == 0:
 	mixer_music.load('../data/loop.ogg')
 if x == 1:
 	mixer_music.load('../data/loop2.ogg')
+if x == 2:
+	mixer_music.load('../data/partypizza.ogg')
+if x == 3:
+	mixer_music.load('../data/terribleterror.ogg')
 mixer_music.play(loops = -1)
 
 
-for i in range(5):
-	f = 120*(i+1)
-	for j in range(5):
-		q = Decoration()
-		q.move(Vector2(f, j*120))
+# for i in range(5):
+# 	f = 120*(i+1)
+# 	for j in range(5):
+# 		q = Decoration()
+# 		q.move(Vector2(f, j*120))
 
-for i in range(5):
-	f = 120*(i+1)
-	for j in range(5):
-		q = Decoration()
-		q.layer = 10
-		q.set_animation_spritesheet('../data/konon.png')
-		q.move(Vector2(f, j*120))
+# for i in range(5):
+# 	f = 120*(i+1)
+# 	for j in range(5):
+# 		q = Decoration()
+# 		q.layer = 10
+# 		q.set_animation_spritesheet('../data/konon.png')
+# 		q.move(Vector2(f, j*120))
 
 for i in range(5):
 	f = 120*(i+1) + 200
@@ -123,7 +127,11 @@ for i in range(5):
 		q = GameObject()
 		q.move(Vector2(f, j*120))
 
+a = Spawner()
+a.move(Vector2(300,300))
+a.schedule_period = 1000
+
 x = Player(app)
 x.name = 'player1'
-x.set_hitbox_offset(12)
 
+#TODO multitasking init before everytick

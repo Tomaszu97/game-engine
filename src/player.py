@@ -1,7 +1,6 @@
 from game_object import *
 from bullet import *
 from shared import *
-import math
 
 class Player(GameObject):
 	def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
@@ -10,7 +9,8 @@ class Player(GameObject):
 		self.name = 'player'
 		self.animation_grid = [4,8]
 		self.set_animation_spritesheet('../data/scaled_xbr.png')
-		self.mass = 70
+		self.mass = 700
+		self.set_hitbox_offset(12)
 
 		#object specific
 		self.clock1 = Clock()
@@ -22,7 +22,7 @@ class Player(GameObject):
 
 	def every_tick(self):
 		self.handle_input()
-		super().every_tick()
+		return super().every_tick()
 		
 
 	def handle_input(self):
@@ -91,5 +91,5 @@ class Player(GameObject):
 		except ValueError:
 			y.kill()
 
-		self.bullet_timer = .05
+		self.bullet_timer = .1
 		

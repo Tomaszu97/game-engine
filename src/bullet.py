@@ -11,7 +11,7 @@ class Bullet(GameObject):
 		self.set_animation_spritesheet('../data/bullet.png')
 		self.set_hitbox_offset(12)
 
-		self.mass = 0.1
+		self.mass = 20
 		
 		#object specific
 		self.damage		=	36

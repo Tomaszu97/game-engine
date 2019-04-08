@@ -23,7 +23,7 @@ class ObjectType(Enum):
 	
 class GameObject(Sprite):
 	def __init__(self, parent=None, position = Vector2(0.0, 0.0)):
-		super().__init__()	
+		super().__init__()
 
 		#identity related
 		self.name			=	'object'
@@ -61,14 +61,14 @@ class GameObject(Sprite):
 		self.mass				=	100
 		self.layer				=	0
 		
-
 		#append to lists
 		if self.parent != None:
 			self.parent.children.append(self)
 		all_objects.append(self)
 
-		#initial
+		#initial look
 		self.set_animation_spritesheet('../data/crate.png')
+
 		
 	def move(self, movement_vector):
 		self.position += movement_vector
@@ -112,6 +112,7 @@ class GameObject(Sprite):
 
 		factor = other_object.hitbox_size.y / other_object.hitbox_size.x
 		displacement = Vector2(0.0,0.0)
+		#momentum = self.movement_speed*self.mass + other_object.movement_speed*other_object.mass
 		
 		#mass_ratio = self.mass / (self.mass + other_object.mass)
 
