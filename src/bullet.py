@@ -10,11 +10,11 @@ class Bullet(GameObject):
 		self.animation_speed		=   4
 		self.set_animation_spritesheet('../data/bullet.png')
 		self.set_hitbox_offset(12)
+		self.layer = 0
 
-		self.mass = 20
+		self.mass = 1
 		
 		#object specific
 		self.damage		=	36
-		self.speed		=	10
-		self.acceleration	=	0
+		self.speed		=	15
 		

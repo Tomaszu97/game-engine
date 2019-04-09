@@ -1,4 +1,3 @@
-from math			import	floor, ceil
 from enum			import	Enum
 from pygame			import	*
 from pygame.time	import	*
@@ -58,7 +57,7 @@ class GameObject(Sprite):
 		self.animation_paused		=	False
 		
 		#collision behavior
-		self.mass				=	100
+		self.mass				=	1000
 		self.layer				=	0
 		
 		#append to lists
@@ -69,6 +68,8 @@ class GameObject(Sprite):
 		#initial look
 		self.set_animation_spritesheet('../data/crate.png')
 
+		self.ready = True
+
 		
 	def move(self, movement_vector):
 		self.position += movement_vector
@@ -76,6 +77,11 @@ class GameObject(Sprite):
 
 
 	def every_tick(self):
+		try:
+			self.ready
+		except:
+			return
+
 		##animate		
 		self.animation_counter += 1
 		if(self.animation_counter >= self.animation_speed):
@@ -96,53 +102,60 @@ class GameObject(Sprite):
 			if display_names:
 				self.surface.blit(self.font.render( self.name, False, Color(0,255,0,255), Color(0,0,255,80) ), (0,0))
 
-		##move
-		self.move(self.movement_speed)
+		
+		#accelrate, break a bit and move
 		self.movement_speed += self.movement_acceleration
+		self.movement_speed *= slowdown_factor
+		self.move(self.movement_speed)
 		
 
-	def collide(self, other_object):       
-		relative_position = self.position + (self.size/2)
-		othercenter = other_object.position + (other_object.size/2)
-		relative_position = relative_position - othercenter
+		
+		
 
-		#dont collide if object width or height is 0
+
+		
+		
+
+	def collide(self, other_object):
+		sign = lambda x: 1 if x>=0 else 0
+
+		#return if object width or height is 0
 		if other_object.hitbox_size.x == 0 or other_object.hitbox_size.y == 0:
 			return
 
-		factor = other_object.hitbox_size.y / other_object.hitbox_size.x
-		displacement = Vector2(0.0,0.0)
-		#momentum = self.movement_speed*self.mass + other_object.movement_speed*other_object.mass
-		
-		#mass_ratio = self.mass / (self.mass + other_object.mass)
-
-		#bounce both objects
+		#move them away and collide
 		if Rect(self.hitbox_position, self.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
+			relative_position = self.position + (self.size/2)
+			othercenter = other_object.position + (other_object.size/2)
+			relative_position = relative_position - othercenter
+			factor = other_object.hitbox_size.y / other_object.hitbox_size.x
+			displacement = Vector2(0.0,0.0)
+			total_speed = self.movement_speed + other_object.movement_speed
+			mass_ratio = self.mass / (self.mass+other_object.mass)
+			other_mass_ratio = other_object.mass / (self.mass+other_object.mass)
+
 			if relative_position.y > relative_position.x*factor:
 				#approach from below
 				if relative_position.y > -relative_position.x*factor:
 					displacement = Vector2(0, (other_object.hitbox_size.y-self.hitbox_position.y+other_object.hitbox_position.y)/2)
-					self.movement_speed.y = -self.movement_speed.y
-					other_object.movement_speed.y = -other_object.movement_speed.y
+					self.movement_speed.y = abs(other_mass_ratio*total_speed.y)
+					other_object.movement_speed.y = -abs(mass_ratio*total_speed.y)
 				#from the left hand side
 				else:
 					displacement = -Vector2((self.hitbox_size.x-other_object.hitbox_position.x+self.hitbox_position.x)/2, 0)
-					self.movement_speed.x = -self.movement_speed.x
-					other_object.movement_speed.x = -other_object.movement_speed.x	
+					self.movement_speed.x = -abs(other_mass_ratio*total_speed.x)
+					other_object.movement_speed.x = abs(mass_ratio*total_speed.x)
 			else:
 				#from the right hand side
 				if relative_position.y > -relative_position.x*factor:
 					displacement = Vector2((other_object.hitbox_size.x-self.hitbox_position.x + other_object.hitbox_position.x)/2 , 0)
-					self.movement_speed.x = -self.movement_speed.x
-					other_object.movement_speed.x = -other_object.movement_speed.x		
+					self.movement_speed.x = abs(other_mass_ratio*total_speed.x)
+					other_object.movement_speed.x = -abs(mass_ratio*total_speed.x)
 				#from above
 				else:
 					displacement = -Vector2(0, (self.hitbox_size.y-other_object.hitbox_position.y+self.hitbox_position.y)/2)
-					self.movement_speed.y = -self.movement_speed.y
-					other_object.movement_speed.y = -other_object.movement_speed.y
-			
-
-
+					self.movement_speed.y = -abs(other_mass_ratio*total_speed.y)
+					other_object.movement_speed.y = abs(mass_ratio*total_speed.y)
 
 			#move both objects
 			self.move(displacement)

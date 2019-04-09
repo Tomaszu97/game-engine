@@ -2,8 +2,10 @@ from game_object import *
 from player import *
 from shared import *
 
+#TODO - do spawning instead of moving
+
 class Spawner(GameObject):
-	def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
+	def __init__(self, parent = None, position = Vector2(0.0, 0.0), spawn_object  = None, schedule_period=  1000):
 		super().__init__(parent, position)
 		
 		self.type =	ObjectType.SPAWNER
@@ -12,23 +14,38 @@ class Spawner(GameObject):
 		self.layer = 10
 
 		#object specific
-		self.counter			=	0
-		self.schedule_period	=	-1
-		self.schedule_once		=	False
 		self.clock				=	Clock()
+		self.counter			=	0
+		self.spawn_object		=	spawn_object
+		self.schedule_period	=	schedule_period
+		self.schedule_once		=	False
+		self.running			=	False
+		
+
+	def start(self):
+		self.counter = 0
+		self.running = True
+
+	def stop(self):
+		self.running = False
 
 
 	def every_tick(self):
+		super().every_tick()
 		self.clock.tick()
+
+		if not self.running:
+			return
+
 		self.counter += self.clock.get_time()
-		if self.counter > self.schedule_period and self.schedule_period != -1:
+		if self.counter > self.schedule_period:
 			
-			x = Bullet(self)
-			x.move(self.position)
-			x.movement_speed = Vector2(1,2)
+			#TODO - pass object before and spawn its copy in this place
+			x = Bullet()
+			x.move(self.position+(self.size/2)-(x.size/2))
+			x.movement_speed = Vector2(0,x.speed)
 
 			self.counter = 0
 			if self.schedule_once:
-				self.schedule_period = -1
+				self.stop()
 
-		return super().every_tick()

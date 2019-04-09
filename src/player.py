@@ -13,30 +13,27 @@ class Player(GameObject):
 		self.set_hitbox_offset(12)
 
 		#object specific
-		self.clock1 = Clock()
-		self.bullet_timer = .3
+		self.bullet_clock = Clock()
+		self.bullet_timer = 0
+		self.bullet_delay = 150
 		self.speed	=	7
 		self.hp		=	100
 		self.mana	=	100
-		
+
 
 	def every_tick(self):
+		self.bullet_clock.tick()
+		self.bullet_timer += self.bullet_clock.get_time()
 		self.handle_input()
 		return super().every_tick()
 		
 
 	def handle_input(self):
-		try:
-			dt = self.clock1.tick(75) / 1000
-		except:
-			return
 		pressed = pygame.key.get_pressed()
 		mouse_pressed = pygame.mouse.get_pressed()
-		self.bullet_timer -= dt
-		
 		speed_vector = Vector2(0.0,0.0)
+		
 		any = False
-
 		if pressed[pygame.K_w]:
 			speed_vector.y -= self.speed
 			self.change_animation_track(1)
@@ -58,38 +55,36 @@ class Player(GameObject):
 			any = True
 		
 		self.movement_speed = speed_vector
-
 		if any == False:
 			self.animation_stop()
 		else:
 			self.animation_play()
 
-		if self.bullet_timer <= 0:
-			if mouse_pressed[0]:
-				self.shoot()
+		if mouse_pressed[0] and self.bullet_timer > self.bullet_delay:
+			self.shoot()
+			self.bullet_timer = 0
+
+		if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
+			x = GameObject()
+			x.move(Vector2(pygame.mouse.get_pos() - (x.size/2)))
+			self.bullet_timer = 0
+
+
 
 
 	def shoot(self):
 		#create bullet in the middle of player
 		bullet = Bullet(self)
 		bullet.move( (self.position+(self.size/2) - bullet.size/2))
-		
-		#can use reversing bullets :O
-		bullet.speed = 10
-		# bullet.acceleration = -0.2
 
 		#calculate where to shoot
 		shooting_direction = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))
 		shooting_direction = shooting_direction.normalize()
-
 		try:
 			bullet.movement_speed = shooting_direction*bullet.speed
-			bullet.movement_acceleration = shooting_direction*bullet.acceleration
 			q = Vector2()
 			q.from_polar(( self.hitbox_size.length()/2 + bullet.hitbox_size.length()/2,  shooting_direction.as_polar()[1]))
 			bullet.move(q)
 		except ValueError:
-			y.kill()
-
-		self.bullet_timer = .1
+			bullet.kill()
 		

@@ -5,12 +5,21 @@ from spawner		import	*
 from decoration		import	*
 from shared			import *
 from threading 		import Thread
+from copy import deepcopy
 import time
 import random
 import os
 
-app = None
 
+
+# import readline # optional, will allow Up/Down/History in the console
+# import code
+# variables = globals().copy()
+# variables.update(locals())
+# shell = code.InteractiveConsole(variables)
+# shell.interact()
+
+app = None
 class App():
 	def __init__(self):
 		global app
@@ -42,8 +51,13 @@ class App():
 			if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != ObjectType.PLAYER:
 				object.kill()
 
-			object.every_tick()
-			
+			#TODO - rethink this its probably ok
+			try:
+				object.every_tick()
+			except:
+				pass
+				#print('ERROR: Object not yet initialized!')
+
 			if object.layer == 0:
 				to_collide.append(object)
 
@@ -53,11 +67,6 @@ class App():
 				if object is not other_object:
 					object.collide(other_object)
 
-			
-			
-
-
-			
 
 	def render(self):
 		self.surface.fill((0,0,90,255))
@@ -87,13 +96,20 @@ class App():
 
 			for event in pygame.event.get():
 				self.handle_events(event)
-		
+
+
+##global functions
+def killall():
+	all_objects.clear()
+
+def quit():
+	killall()
+	pygame.quit()
 
 Thread(target=App).start()
 time.sleep(1)
 
 ###########################################
-
 
 x = random.randint(0,3)
 if x == 0:
@@ -121,17 +137,18 @@ mixer_music.play(loops = -1)
 # 		q.set_animation_spritesheet('../data/konon.png')
 # 		q.move(Vector2(f, j*120))
 
-for i in range(5):
-	f = 120*(i+1) + 200
-	for j in range(5):
-		q = GameObject()
-		q.move(Vector2(f, j*120))
+# for i in range(5):
+# 	f = 120*(i+1) + 200
+# 	for j in range(5):
+# 		q = GameObject()
+# 		q.move(Vector2(f, j*120))
+
 
 a = Spawner()
 a.move(Vector2(300,300))
-a.schedule_period = 1000
+
 
 x = Player(app)
 x.name = 'player1'
 
-#TODO multitasking init before everytick
+#TODO music doesnt play if file imported from somewhere 
