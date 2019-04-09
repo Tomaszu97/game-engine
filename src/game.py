@@ -5,19 +5,11 @@ from spawner		import	*
 from decoration		import	*
 from shared			import *
 from threading 		import Thread
-from copy import deepcopy
 import time
 import random
 import os
+import code
 
-
-
-# import readline # optional, will allow Up/Down/History in the console
-# import code
-# variables = globals().copy()
-# variables.update(locals())
-# shell = code.InteractiveConsole(variables)
-# shell.interact()
 
 app = None
 class App():
@@ -150,5 +142,7 @@ a.move(Vector2(300,300))
 
 x = Player(app)
 x.name = 'player1'
+
+code.interact(local=locals())
 
 #TODO music doesnt play if file imported from somewhere 
