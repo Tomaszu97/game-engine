@@ -5,6 +5,7 @@ from spawner		import	*
 from decoration		import	*
 from label			import	*
 from shared			import	*
+from enemy			import	*
 from threading 		import Thread
 import time
 import random
@@ -140,6 +141,7 @@ a.move(Vector2(300,300))
 
 x = Player()
 x.name = 'player1'
+y = Enemy_Orbiting(position=(500, 600), target_list=[x])
 
 code.interact(local=locals())
 
