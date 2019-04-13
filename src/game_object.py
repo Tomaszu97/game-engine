@@ -58,7 +58,7 @@ class GameObject(Sprite):
 		self.animation_paused		=	False
 		
 		#collision behavior
-		self.mass				=	1000
+		self.mass				=	10000
 		self.layer				=	0
 		
 		#append to lists
@@ -143,48 +143,29 @@ class GameObject(Sprite):
 			if relative_position.x < 0:
 				#self approach from the left
 				x_intersection = -round(self.hitbox_position.x+self.hitbox_size.x-other_object.hitbox_position.x)
-				# if self.mass != 0:
-				# 	self.movement_speed.x = -abs(other_mass_ratio*total_speed.x)
-				# if other_object.mass != 0:
-				# 	other_object.movement_speed.x = abs(mass_ratio*total_speed.x)
 			else:
 				#self approach from the right
 				x_intersection = round(other_object.hitbox_position.x+other_object.hitbox_size.x-self.hitbox_position.x)
-				# if self.mass != 0:
-				# 	self.movement_speed.x = abs(other_mass_ratio*total_speed.x)
-				# if other_object.mass != 0:
-				# 	other_object.movement_speed.x = -abs(mass_ratio*total_speed.x)
-
 			if relative_position.y < 0:
 				#self approach from above
 				y_intersection = -round(self.hitbox_position.y+self.hitbox_size.y-other_object.hitbox_position.y)
-				# if self.mass != 0:
-				# 	self.movement_speed.y = -abs(other_mass_ratio*total_speed.y)
-				# if other_object.mass != 0:
-				# 	other_object.movement_speed.y = abs(mass_ratio*total_speed.y)
 			else:
 				#self approach from below
 				y_intersection = round(other_object.hitbox_position.y+other_object.hitbox_size.y-self.hitbox_position.y)
-				# if self.mass != 0:
-				# 	self.movement_speed.y = abs(other_mass_ratio*total_speed.y)
-				# if other_object.mass != 0:
-				# 	other_object.movement_speed.y = -abs(mass_ratio*total_speed.y)
 			
-					
 			if abs(x_intersection) > abs(y_intersection):
 				if self.mass != 0:
-					self.move(0, y_intersection/2)
+					self.move(0, y_intersection*other_mass_ratio)
 					self.movement_speed.y = sign(y_intersection)*abs(other_mass_ratio*total_speed.y)
 				if other_object.mass != 0:
-					other_object.move(0, -y_intersection/2)
+					other_object.move(0, -y_intersection*mass_ratio)
 					other_object.movement_speed.y = -sign(y_intersection)*abs(mass_ratio*total_speed.y)
-
 			else:
 				if self.mass != 0:
-					self.move(x_intersection/2, 0)
+					self.move(x_intersection*other_mass_ratio, 0)
 					self.movement_speed.x = sign(x_intersection)*abs(other_mass_ratio*total_speed.x)
 				if other_object.mass != 0:
-					other_object.move(-x_intersection/2, 0)
+					other_object.move(-x_intersection*mass_ratio, 0)
 					other_object.movement_speed.x = -sign(x_intersection)*abs(mass_ratio*total_speed.x)
 
 
