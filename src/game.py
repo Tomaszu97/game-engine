@@ -3,22 +3,20 @@ from game_object	import	*
 from player			import	*
 from spawner		import	*
 from decoration		import	*
-from shared			import *
+from label			import	*
+from shared			import	*
 from threading 		import Thread
 import time
 import random
 import os
 import code
+import copy
 
 
-app = None
 class App():
 	def __init__(self):
-		global app
-		app = self
 		self.children = []
 
-		self.tick = tick
 		self.clock = Clock()
 		self.running = True
 		
@@ -58,6 +56,7 @@ class App():
 			for other_object in to_collide:
 				if object is not other_object:
 					object.collide(other_object)
+					
 
 
 	def render(self):
@@ -84,7 +83,7 @@ class App():
 		while(self.running):
 			self.loop()
 			self.render()
-			self.clock.tick(self.tick)
+			self.clock.tick(tick)
 
 			for event in pygame.event.get():
 				self.handle_events(event)
@@ -136,11 +135,10 @@ mixer_music.play(loops = -1)
 # 		q.move(Vector2(f, j*120))
 
 
-a = Spawner()
+a = Wall()
 a.move(Vector2(300,300))
 
-
-x = Player(app)
+x = Player()
 x.name = 'player1'
 
 code.interact(local=locals())

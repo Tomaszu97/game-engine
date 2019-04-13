@@ -1,6 +1,7 @@
-from game_object import *
-from bullet import *
-from shared import *
+from game_object import	*
+from wall import	*
+from bullet import	*
+from shared import	*
 
 class Player(GameObject):
 	def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
@@ -66,6 +67,11 @@ class Player(GameObject):
 
 		if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
 			x = GameObject()
+			x.move(Vector2(pygame.mouse.get_pos() - (x.size/2)))
+			self.bullet_timer = 0
+
+		if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
+			x = Wall()
 			x.move(Vector2(pygame.mouse.get_pos() - (x.size/2)))
 			self.bullet_timer = 0
 

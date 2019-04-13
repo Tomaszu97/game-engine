@@ -40,6 +40,7 @@ class Spawner(GameObject):
 		self.counter += self.clock.get_time()
 		if self.counter > self.schedule_period:
 			
+			
 			#TODO - pass object before and spawn its copy in this place
 			x = Bullet()
 			x.move(self.position+(self.size/2)-(x.size/2))
