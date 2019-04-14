@@ -5,11 +5,12 @@ Still a work in progress.
 - [x] easy object animation with spritesheets
 - [X] collision detection
 - [ ] simple physics with speed, acceleration and object bounce
-- [ ] simple object spawning with single line of code
+- [x] simple object spawning with single line of code
 - [ ] spawners - objects spawning other objects  
-- [ ] object tree handling
+- [x] object tree handling
 - [ ] object definitions in another file (YAML)
 - [ ] object creation from other files
+- [ ] drawing layers
   
-First achievement:  
-![image missing](other/1.png)  
+This is how it looks at the moment:  
+![image missing](other/2.png)  

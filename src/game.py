@@ -2,22 +2,27 @@ from pygame			import	*
 from game_object	import	*
 from player			import	*
 from spawner		import	*
-from bullet 		import	*
-from threading import Thread
+from decoration		import	*
+from label			import	*
+from shared			import	*
+from enemy			import	*
+from threading 		import Thread
 import time
+import random
+import os
+import code
+import copy
 
-a = None
 
 class App():
 	def __init__(self):
-		global a
-		a = self
 		self.children = []
 
-		self.tick = 75
 		self.clock = Clock()
 		self.running = True
-		self.surface = pygame.display.set_mode((1400, 800), pygame.HWSURFACE | pygame.DOUBLEBUF)
+		
+		os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (window_position[0], window_position[1])
+		self.surface = pygame.display.set_mode((window_size[0], window_size[1]), HWSURFACE | pygame.DOUBLEBUF)
 		pygame.init()
 		
 		self.run()
@@ -29,20 +34,44 @@ class App():
 			
 
 	def loop(self):
-		for object in self.children:
-			object.every_tick()
-			#shitty collision detection O(n!)
-			for other_object in self.children:
+		to_collide = []
+
+		for object in all_objects:
+			#TODO - kill object if out of bounds (except player) - rethink this
+			w, h = pygame.display.get_surface().get_size()
+			if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != ObjectType.PLAYER:
+				object.kill()
+
+			#TODO - rethink this its probably ok
+			try:
+				object.every_tick()
+			except:
+				pass
+				#print('ERROR: Object not yet initialized!')
+
+			if object.layer == 0:
+				to_collide.append(object)
+
+		#collisions
+		for object in to_collide:
+			for other_object in to_collide:
 				if object is not other_object:
 					object.collide(other_object)
-			
+					
+
 
 	def render(self):
-		self.surface.fill((120,0,0,255))
-		
-		for object in self.children:
-			self.surface.blit(object.surface, (object.rect.left, object.rect.top))
-			
+		self.surface.fill((0,0,90,255))
+ 
+		try:
+			#draw object in layered order
+			for layer in range(min(object.layer for object in all_objects), max(object.layer for object in all_objects)+1):
+				for object in all_objects:
+					if object.layer == layer:
+						self.surface.blit(object.surface, (object.position.x, object.position.y))
+		except ValueError:
+			pass
+
 		pygame.display.flip()
 		
 
@@ -55,22 +84,65 @@ class App():
 		while(self.running):
 			self.loop()
 			self.render()
-			self.clock.tick(self.tick)
+			self.clock.tick(tick)
 
 			for event in pygame.event.get():
 				self.handle_events(event)
-		
+
+
+##global functions
+def killall():
+	all_objects.clear()
+
+def quit():
+	killall()
+	pygame.quit()
 
 Thread(target=App).start()
-time.sleep(3)
+time.sleep(1)
 
-# go = Player(appobj)
-# go.mass = 36
-# go.animation_grid = [4,8]
-# go.anim_set_spritesheet('../data/scaled_xbr.png')
-# # go.display_border = True
-# go.display_hitbox = True
-# go.display_name = True
-# go.movement_speed_vector = Vector2(1,2)
+###########################################
 
-#SET SPRITESHEET AFTER ANIM GRID
+x = random.randint(0,3)
+if x == 0:
+	mixer_music.load('../data/loop.ogg')
+if x == 1:
+	mixer_music.load('../data/loop2.ogg')
+if x == 2:
+	mixer_music.load('../data/partypizza.ogg')
+if x == 3:
+	mixer_music.load('../data/terribleterror.ogg')
+mixer_music.play(loops = -1)
+
+
+# for i in range(5):
+# 	f = 120*(i+1)
+# 	for j in range(5):
+# 		q = Decoration()
+# 		q.move(Vector2(f, j*120))
+
+# for i in range(5):
+# 	f = 120*(i+1)
+# 	for j in range(5):
+# 		q = Decoration()
+# 		q.layer = 10
+# 		q.set_animation_spritesheet('../data/konon.png')
+# 		q.move(Vector2(f, j*120))
+
+# for i in range(5):
+# 	f = 120*(i+1) + 200
+# 	for j in range(5):
+# 		q = GameObject()
+# 		q.move(Vector2(f, j*120))
+
+
+a = Wall()
+a.move(Vector2(300,300))
+
+x = Player()
+x.name = 'player1'
+y = Enemy_Wandering(position=(500, 600), target_list=[x])
+
+code.interact(local=locals())
+
+#TODO music doesnt play if file imported from somewhere 
