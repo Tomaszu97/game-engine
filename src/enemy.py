@@ -22,16 +22,18 @@ class Enemy(GameObject):
 
         #object specific
         self.hp = 20
-        self.speed = 2
-        self.sight_radius = 300
+        self.speed = 1
+        self.sight_radius = 400
 
         #state related        
         self.state_clock = Clock()          # clock to measure time in states
         self.state_timer = 0                # time in actual state
         self.idle_to_patrol_time = 4000     # when to start patroling
-        self.travelling = False
         self.waypoint = None                # waypoint used in patroling
         self.state = self.idle              # current state of enemy
+        self.attack_range = 300
+        self.attack_state = None
+        self.attack_list = []
 
 
     def every_tick(self):
@@ -65,7 +67,11 @@ class Enemy(GameObject):
         distance = direction.length()
         direction = direction.normalize()
         self.movement_speed = direction * self.speed
-        if distance > self.sight_radius:
+        if distance < self.attack_range:
+            self.state_timer = 0
+            self.attack_state = self.choose_skill
+            self.state = self.attack
+        elif distance > self.sight_radius:
             self.state_timer = 0
             self.state = self.idle
     
@@ -90,11 +96,33 @@ class Enemy(GameObject):
         self.waypoint = (Vector2((random.randint(0,window_size[1]), random.randint(0, window_size[0]))))  
         self.state_timer = 0
         self.state = self.patrol
+
+    def attack(self):
+        self.attack_state()
+
+    def choose_skill(self):
+        self.attack_state = random.choice(self.attack_list)
             
     ##################### SKILLS ##########################
     # TODO: Add choose_skill, exhausted, cooldown
-    def charge(self, charge_time):
+
+    def charging(self, charge_time):
         pass
+
+    def speed_boost(self):
+        distance = Vector2(self.target.position - self.position)
+        distance = distance.normalize()
+        self.movement_speed = distance * self.speed * 3
+        if self.state_timer > 2000:
+            self.state_timer = 0
+            self.attack_state = self.exhausted
+
+    def exhausted(self):
+        exhaust_lenght = 3000
+        self.movement_speed *= 0.999
+        if self.state_timer > exhaust_lenght:
+            self.state_timer = 0
+            self.state = self.idle 
 
 class Enemy_Following(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
@@ -102,6 +130,7 @@ class Enemy_Following(Enemy):
         self.enemy_type = EnemyType.FOLLOWING
         self.set_animation_spritesheet('../data/konon.png')
         self.mass = 1000
+        self.attack_list = [self.speed_boost]
 
     def every_tick(self):
         return super().every_tick()
@@ -131,6 +160,7 @@ class Enemy_Wandering(Enemy):
         super().__init__(parent, position, target_list)
 
         self.enemy_type = EnemyType.WANDERING
+        
         self.set_animation_spritesheet('../data/konon.png')
         self.mass = 1000
         self.idle_to_patrol_time = 500
