@@ -1,6 +1,7 @@
 from game_object    import *
 from bullet         import *
 from shared         import *
+import random
 
 class EnemyType(Enum):
 	NULL        = 0
@@ -14,13 +15,12 @@ class EnemyType(Enum):
 class Enemy(GameObject):
 	def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
 		super().__init__(parent, position)
-
 		self.type = ObjectType.ENEMY
-
+		
+		#object specific
+		self.set_animation_spritesheet('../data/konon.png')
 		self.target_list = target_list
 		self.target = self.choose_target()
-
-		#object specific
 		self.hp = 100
 		self.speed = 1
 		self.sight_radius = 400
@@ -37,28 +37,27 @@ class Enemy(GameObject):
 		self.attack_list        = []
 		self.cooldown_time      = 0                 # time from one skill to another
 
-		#collision
-		self.is_collideable		=  {'NULL' 		:	True,
-									'PLAYER'	:	True,
-									'ALLY'		:	True,
-									'ENEMY'		:	True,
-									'SPAWNER'	:	True,
-									'BULLET'	:	True,
-									'CONTAINER'	:	False,
-									'DECORATION':	False,
-									'LABEL'		:	False,
-									'WALL'		:	True}
-
-		self.proccess_collision = {	'NULL' 		:	[],
-									'PLAYER'	:	['bounce'],
-									'ALLY'		:	[],
-									'ENEMY'		:	[],
-									'SPAWNER'	:	[],
-									'BULLET'	:	['take_damage'],
-									'CONTAINER'	:	[],
-									'DECORATION':	[],
-									'LABEL'		:	[],
-									'WALL'		:	['bounce']}
+		#collision overwrite
+		self.is_collideable[ObjectType.NULL]			=	True
+		self.is_collideable[ObjectType.PLAYER]			=	True
+		self.is_collideable[ObjectType.ALLY]			=	True
+		self.is_collideable[ObjectType.ENEMY]			=	True
+		self.is_collideable[ObjectType.SPAWNER]			=	True
+		self.is_collideable[ObjectType.BULLET]			=	True
+		self.is_collideable[ObjectType.CONTAINER]		=	False
+		self.is_collideable[ObjectType.DECORATION]		=	False
+		self.is_collideable[ObjectType.LABEL]			=	False
+		self.is_collideable[ObjectType.WALL]			=	True
+		self.is_collideable[ObjectType.TRAPDOOR]		=	False
+		self.is_collideable[ObjectType.DIALOG]			=	False
+		
+		self.process_collision[ObjectType.NULL]			=	[self.bounce]
+		self.process_collision[ObjectType.PLAYER]		=	[self.bounce]
+		self.process_collision[ObjectType.ALLY]			=	[self.bounce]
+		self.process_collision[ObjectType.ENEMY]		=	[self.bounce]
+		self.process_collision[ObjectType.SPAWNER]		=	[self.bounce]
+		self.process_collision[ObjectType.BULLET]		=	[self.take_damage]
+		self.process_collision[ObjectType.WALL]			=	[self.bounce]
 
 		self.team = False
 
@@ -66,7 +65,7 @@ class Enemy(GameObject):
 		if object.type.name == 'BULLET':
 			if object.team == self.team:
 				return False
-		return self.is_collideable[str(object.type.name)]
+		return self.is_collideable[object.type]
 
 	def every_tick(self):
 		self.state_clock.tick()
@@ -183,65 +182,6 @@ class Enemy(GameObject):
 			self.state_timer = 0
 			self.state = self.idle 
 
-	# def bounce(self, other_object):
-	# 	sign = lambda x: 1 if x>=0 else -1
-
-	# 	#return if object width or height is 0
-	# 	if other_object.hitbox_size.x == 0 or other_object.hitbox_size.y == 0:
-	# 		return
-
-
-	# 	#move them away and collide
-	# 	if Rect(self.hitbox_position, self.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
-	# 		relative_position = self.position + (self.size/2) - other_object.position - (other_object.size/2)
-	# 		total_speed = self.movement_speed + other_object.movement_speed
-
-	# 		if self.mass == 0 or other_object.mass == 0:
-	# 			mass_ratio = 1
-	# 			other_mass_ratio = 1
-	# 		else:
-	# 			mass_ratio = self.mass / (self.mass+other_object.mass)
-	# 			other_mass_ratio = other_object.mass / (self.mass+other_object.mass)	
-
-
-	# 		#relpos from other to me
-	# 		if relative_position.x < 0:
-	# 			#self approach from the left
-	# 			x_intersection = -round(self.hitbox_position.x+self.hitbox_size.x-other_object.hitbox_position.x)
-	# 		else:
-	# 			#self approach from the right
-	# 			x_intersection = round(other_object.hitbox_position.x+other_object.hitbox_size.x-self.hitbox_position.x)
-	# 		if relative_position.y < 0:
-	# 			#self approach from above
-	# 			y_intersection = -round(self.hitbox_position.y+self.hitbox_size.y-other_object.hitbox_position.y)
-	# 		else:
-	# 			#self approach from below
-	# 			y_intersection = round(other_object.hitbox_position.y+other_object.hitbox_size.y-self.hitbox_position.y)
-			
-	# 		if abs(x_intersection) > abs(y_intersection):
-	# 			if self.mass != 0:
-	# 				self.move(0, y_intersection*other_mass_ratio)
-	# 				self.movement_speed.y = sign(y_intersection)*abs(other_mass_ratio*total_speed.y)
-	# 			if other_object.mass != 0:
-	# 				other_object.move(0, -y_intersection*mass_ratio)
-	# 				other_object.movement_speed.y = -sign(y_intersection)*abs(mass_ratio*total_speed.y)
-	# 		else:
-	# 			if self.mass != 0:
-	# 				self.move(x_intersection*other_mass_ratio, 0)
-	# 				self.movement_speed.x = sign(x_intersection)*abs(other_mass_ratio*total_speed.x)
-	# 			if other_object.mass != 0:
-	# 				other_object.move(-x_intersection*mass_ratio, 0)
-	# 				other_object.movement_speed.x = -sign(x_intersection)*abs(mass_ratio*total_speed.x)
-
-	# 		if other_object.friendly_m:
-	# 			if isinstance(other_object, Bullet):
-	# 				self.hp -= other_object.damage
-	# 				other_object.kill()
-
-	# 		if self.hp <= 0:
-	# 			exp = Explosion(parent=None ,position=(self.position - self.size/2))
-	# 			self.kill()		
-
 
 class Enemy_Following(Enemy):
 	def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
@@ -250,7 +190,7 @@ class Enemy_Following(Enemy):
 		self.set_animation_spritesheet('../data/konon.png')
 		self.animation_speed = 0.25
 		self.mass = 1000
-		self.attack_list = [self.speed_boost]
+		self.attack_list = [self.shoot]
 
 	def every_tick(self):
 		return super().every_tick()

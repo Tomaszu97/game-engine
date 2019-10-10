@@ -8,27 +8,22 @@ class Decoration(GameObject):
 		self.name = 'decor'
 		self.layer = collision_layer - 1
 		self.animation_grid			=	[1,1]	#always before setting spritesheet
-		self.set_animation_spritesheet('../data/decoration.png')
+		self.set_animation_spritesheet(resources.decoration)
 		self.mass = 0
 
-		self.is_collideable		=  {'NULL' 		:	False,
-									'PLAYER'	:	False,
-									'ALLY'		:	False,
-									'ENEMY'		:	False,
-									'SPAWNER'	:	False,
-									'BULLET'	:	False,
-									'CONTAINER'	:	False,
-									'DECORATION':	False,
-									'LABEL'		:	False,
-									'WALL'		:	False}
-								
-		self.proccess_collision = {	'NULL' 		:	[],
-									'PLAYER'	:	[],
-									'ALLY'		:	[],
-									'ENEMY'		:	[],
-									'SPAWNER'	:	[],
-									'BULLET'	:	[],
-									'CONTAINER'	:	[],
-									'DECORATION':	[],
-									'LABEL'		:	[],
-									'WALL'		:	[]}
+		#collision overwrite
+		self.is_collideable[ObjectType.NULL]			=	False
+		self.is_collideable[ObjectType.PLAYER]			=	False
+		self.is_collideable[ObjectType.ALLY]			=	False
+		self.is_collideable[ObjectType.ENEMY]			=	False
+		self.is_collideable[ObjectType.SPAWNER]			=	False
+		self.is_collideable[ObjectType.BULLET]			=	False
+		self.is_collideable[ObjectType.CONTAINER]		=	False
+		self.is_collideable[ObjectType.DECORATION]		=	False
+		self.is_collideable[ObjectType.LABEL]			=	False
+		self.is_collideable[ObjectType.WALL]			=	False
+		self.is_collideable[ObjectType.TRAPDOOR]		=	False
+		self.is_collideable[ObjectType.DIALOG]			=	False
+
+class ProgressBar(Decoration):
+	pass

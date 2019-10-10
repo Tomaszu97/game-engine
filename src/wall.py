@@ -8,26 +8,25 @@ class Wall(GameObject):
 		self.name = 'wall'
 		self.layer = collision_layer
 		self.animation_grid			=	[1,1]	#always before setting spritesheet
-		self.set_animation_spritesheet('../data/smallwall.png')
+		self.set_animation_spritesheet(resources.smallwall)
 		self.mass = 0
-		self.is_collideable		=  {'NULL' 		:	True,
-									'PLAYER'	:	True,
-									'ALLY'		:	True,
-									'ENEMY'		:	True,
-									'SPAWNER'	:	True,
-									'BULLET'	:	True,
-									'CONTAINER'	:	False,
-									'DECORATION':	False,
-									'LABEL'		:	False,
-									'WALL'		:	False}
 
-		self.proccess_collision = {	'NULL' 		:	[],
-									'PLAYER'	:	[],
-									'ALLY'		:	[],
-									'ENEMY'		:	[],
-									'SPAWNER'	:	[],
-									'BULLET'	:	[],
-									'CONTAINER'	:	[],
-									'DECORATION':	[],
-									'LABEL'		:	[],
-									'WALL'		:	[]}
+		#collision overwrite
+		self.is_collideable[ObjectType.NULL]			=	True
+		self.is_collideable[ObjectType.PLAYER]			=	True
+		self.is_collideable[ObjectType.ALLY]			=	True
+		self.is_collideable[ObjectType.ENEMY]			=	True
+		self.is_collideable[ObjectType.SPAWNER]			=	False
+		self.is_collideable[ObjectType.BULLET]			=	True
+		self.is_collideable[ObjectType.CONTAINER]		=	False
+		self.is_collideable[ObjectType.DECORATION]		=	False
+		self.is_collideable[ObjectType.LABEL]			=	False
+		self.is_collideable[ObjectType.WALL]			=	False
+		self.is_collideable[ObjectType.TRAPDOOR]		=	False
+		self.is_collideable[ObjectType.DIALOG]			=	False
+		
+		self.process_collision[ObjectType.NULL]			=	[self.bounce]
+		self.process_collision[ObjectType.PLAYER]		=	[self.bounce]
+		self.process_collision[ObjectType.ALLY]			=	[self.bounce]
+		self.process_collision[ObjectType.ENEMY]		=	[self.bounce]
+		self.process_collision[ObjectType.BULLET]		=	[self.bounce]

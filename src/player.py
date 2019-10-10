@@ -9,7 +9,7 @@ class Player(GameObject):
 		self.type =	ObjectType.PLAYER
 		self.name = 'player'
 		self.animation_grid = [6,4]
-		self.set_animation_spritesheet('../data/smallcoloredplayer.png')
+		self.set_animation_spritesheet(resources.smallcoloredplayer)
 		self.mass = 700
 		self.layer = collision_layer
 		self.set_hitbox_offset(6)
@@ -21,43 +21,43 @@ class Player(GameObject):
 		self.bullet_timer = 0
 		self.bullet_delay = 150
 		self.speed				= 3
-		self.hp					= 100
+		self.hp					= 99999999999
 		self.mana				= 100
 		self.contact_damage 	= 0
-		self.damage				= 10
+		self.damage				= 30
 
 		#collision
 		self.team = True
 
-
-		self.is_collideable		=  {'NULL' 		:	True,
-									'PLAYER'	:	True,
-									'ALLY'		:	True,
-									'ENEMY'		:	True,
-									'SPAWNER'	:	True,
-									'BULLET'	:	True,
-									'CONTAINER'	:	False,
-									'DECORATION':	False,
-									'LABEL'		:	False,
-									'WALL'		:	True}
-
-		self.proccess_collision = {	'NULL' 		:	[],
-									'PLAYER'	:	[],
-									'ALLY'		:	[],
-									'ENEMY'		:	['bounce', 'take_damage'],
-									'SPAWNER'	:	[],
-									'BULLET'	:	['take_damage'],
-									'CONTAINER'	:	[],
-									'DECORATION':	[],
-									'LABEL'		:	[],
-									'WALL'		:	['bounce']}
+		#collision overwrite
+		self.is_collideable[ObjectType.NULL]			=	True
+		self.is_collideable[ObjectType.PLAYER]			=	True
+		self.is_collideable[ObjectType.ALLY]			=	True
+		self.is_collideable[ObjectType.ENEMY]			=	True
+		self.is_collideable[ObjectType.SPAWNER]			=	False
+		self.is_collideable[ObjectType.BULLET]			=	True
+		self.is_collideable[ObjectType.CONTAINER]		=	False
+		self.is_collideable[ObjectType.DECORATION]		=	False
+		self.is_collideable[ObjectType.LABEL]			=	False
+		self.is_collideable[ObjectType.WALL]			=	True
+		self.is_collideable[ObjectType.TRAPDOOR]		=	True
+		self.is_collideable[ObjectType.DIALOG]			=	False
+		
+		self.process_collision[ObjectType.NULL]			=	[self.bounce]
+		self.process_collision[ObjectType.PLAYER]		=	[self.bounce]
+		self.process_collision[ObjectType.ALLY]			=	[self.bounce]
+		self.process_collision[ObjectType.ENEMY]		=	[self.bounce, self.take_damage]
+		self.process_collision[ObjectType.BULLET]		=	[self.take_damage]
+		self.process_collision[ObjectType.WALL]			=	[self.bounce]
+		self.process_collision[ObjectType.TRAPDOOR]		=	[]
 		
 
 	def check_collideable(self, object):
 		if object.type.name == 'BULLET':
 			if object.team == self.team:
 				return False
-		return self.is_collideable[str(object.type.name)]
+		return self.is_collideable[object.type]
+
 
 	def every_tick(self):
 		self.bullet_clock.tick()
@@ -123,12 +123,10 @@ class Player(GameObject):
 			self.bullet_timer = 0
 
 
-
-
 	def shoot(self):
 		#create bullet in the middle of player
 		bullet = Bullet(self)
-		bullet.move( (self.position+(self.size/8) - bullet.size/8))
+		bullet.move(self.position)
 
 		#calculate where to shoot
 		shooting_direction = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))

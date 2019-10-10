@@ -7,7 +7,8 @@ from label			import	*
 from shared			import	*
 from enemy			import	*
 from tiled			import	*
-from collision_manager import *
+from collision_manager	import *
+from resource_handler	import	*
 from threading 		import	Thread
 import time
 import random
@@ -96,13 +97,29 @@ Thread(target=App).start()
 time.sleep(1)
 
 ###########################################
-#TODO music doesnt play if file imported from somewhere 
-#TODO camera
+#TODO music doesnt play if file imported from somewhere
 #TODO replace above time.sleep to sth that makes more sense
 TiledManager().load_map('../data/nice_map.tmx')
+
 pl = Player()
-go = GameObject()
-#go2 = go.copy()
-#en = EnemyFollowing(pl)
-#en2 = en.copy()
+tr = Trapdoor()
+tr2 = Trapdoor()
+tr.move(200,200)
+tr2.move(200,350)
+tr.reset()
+tr2.reset()
+
+def f():
+	print('spawning enemies...')
+	Enemy_Following(target_list = [pl], position = Vector2(200.0,400.0))
+	Enemy_Following(target_list = [pl], position = Vector2(400.0,200.0))
+	Enemy_Following(target_list = [pl], position = Vector2(400.0,400.0))
+tr.set_handler(f)
+
+def g():
+	print('resetting tr...')
+	tr.reset()
+	tr2.reset()
+tr2.set_handler(g)
+
 code.interact(local=locals())
