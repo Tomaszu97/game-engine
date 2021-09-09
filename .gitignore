@@ -1,3 +1,4 @@
-.idea/
-src/__pychache__/
-src/*.pyc
+**/.idea/
+**/tempCodeRunnerFile.py
+**/__pychache__/
+**/*.pyc
