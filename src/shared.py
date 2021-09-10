@@ -15,14 +15,16 @@ collision_layer  = 4
 all_objects      = []
 slowdown_factor  = 0.99
 
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
 #TODO - this is temporary
 resources        = ImageController()
-for filename in os.listdir('../data/images/'):
+for filename in os.listdir(f'{BASEDIR}/../data/images/'):
     print(filename)
     if filename.endswith('.png'):
         newname = str(filename).split('.')[0]
         print(newname)
-        setattr(resources, newname, f'../data/images/{filename}')
+        setattr(resources, newname, f'{BASEDIR}/../data/images/{filename}')
         #resources.newname  =   f'../data/images/{filename}'
 
 #TODO - temp

@@ -43,8 +43,8 @@ class App():
 
             try:
                 object.every_tick()
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
             if object.layer == collision_layer:
                 to_collide.append(object)
@@ -98,7 +98,7 @@ time.sleep(1)
 ###########################################
 #TODO music doesnt play if file imported from somewhere
 #TODO replace above time.sleep to sth that makes more sense
-TiledManager().load_map('../data/maps/nice_map.tmx')
+TiledManager().load_map(f'{BASEDIR}/../data/maps/nice_map.tmx')
 
 pl = Player()
 tr = Trapdoor()

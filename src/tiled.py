@@ -22,11 +22,11 @@ class TiledManager():
 
         for obj in root:
             if obj.tag == 'tileset':
-                temptree    =   et.parse('../data/maps/'+obj.attrib['source'])
+                temptree    =   et.parse(f'{BASEDIR}/../data/maps/'+obj.attrib['source'])
                 temproot    =   temptree.getroot()
                 for item in temproot:
                     if item.tag == 'image':
-                        tileset         =   pygame.image.load('../data/images/' +  item.attrib['source'] ).convert_alpha()
+                        tileset         =   pygame.image.load(f'{BASEDIR}/../data/images/' +  item.attrib['source'] ).convert_alpha()
                         tilesetwidth    =   int(item.attrib['width'])
                         tilesetheight   =   int(item.attrib['height'])
 
