@@ -31,26 +31,11 @@ class Player(GameObject):
         self.team = True
 
         # collision overwrite
-        self.is_collideable[ObjectType.NULL]       = True
-        self.is_collideable[ObjectType.PLAYER]     = True
-        self.is_collideable[ObjectType.ALLY]       = True
-        self.is_collideable[ObjectType.ENEMY]      = True
         self.is_collideable[ObjectType.SPAWNER]    = False
-        self.is_collideable[ObjectType.BULLET]     = True
-        self.is_collideable[ObjectType.CONTAINER]  = False
-        self.is_collideable[ObjectType.DECORATION] = False
-        self.is_collideable[ObjectType.LABEL]      = False
-        self.is_collideable[ObjectType.WALL]       = True
         self.is_collideable[ObjectType.TRAPDOOR]   = True
-        self.is_collideable[ObjectType.DIALOG]     = False
 
-        self.process_collision[ObjectType.NULL]     = [self.bounce]
-        self.process_collision[ObjectType.PLAYER]   = [self.bounce]
-        self.process_collision[ObjectType.ALLY]     = [self.bounce]
         self.process_collision[ObjectType.ENEMY]    = [self.bounce, self.take_damage]
         self.process_collision[ObjectType.BULLET]   = [self.take_damage]
-        self.process_collision[ObjectType.WALL]     = [self.bounce]
-        self.process_collision[ObjectType.TRAPDOOR] = []
 
 
     def check_collideable(self, object):
@@ -100,12 +85,15 @@ class Player(GameObject):
         if pressed[pygame.K_p]:
             self.change_animation_track(5)
             any=True
-
+        
+        if speed_vector != (0, 0):
+            speed_vector = speed_vector.normalize() * self.speed
         self.movement_speed = speed_vector
-        if any == False:
-            self.animation_stop()
-        else:
+
+        if any:
             self.animation_play()
+        else:
+            self.animation_stop()
 
         if mouse_pressed[0] and self.bullet_timer > self.bullet_delay:
             self.shoot()

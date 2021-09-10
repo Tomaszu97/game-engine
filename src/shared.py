@@ -20,6 +20,8 @@ slowdown_factor  = 0.99
 camera_position  = Vector2(0.0, 0.0)
 
 
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
 #TODO - this is temporary
 resources        = ImageController()
 for filename in os.listdir(basedir + 'data/images/'):

@@ -253,9 +253,9 @@ class GameObject(Sprite):
         if isinstance(spritesheet, Surface):
             self.animation_spritesheet = spritesheet
         else:
-            self.animation_spritesheet  =   pygame.image.load(spritesheet).convert_alpha()
+            self.animation_spritesheet = pygame.image.load(spritesheet).convert_alpha()
         self.set_size(Vector2(self.animation_spritesheet.get_rect().width/self.animation_grid[1], self.animation_spritesheet.get_rect().height/self.animation_grid[0]))
-        self.surface    =   Surface((self.size.x, self.size.y), pygame.SRCALPHA, 32)
+        self.surface = Surface((self.size.x, self.size.y), pygame.SRCALPHA, 32)
 
     # change animation
     def change_animation_track(self, track_number):
@@ -292,7 +292,7 @@ class GameObject(Sprite):
             copyattr = getattr(copyobj, attr)
             selfattr = getattr(self, attr)
 
-            if type(getattr(self,attr)).__name__ == 'Font':     # dont copy font
+            if type(getattr(self, attr)).__name__ == 'Font':     # dont copy font
                 print('WARNING: fonts arent copied during object copy')
             elif hasattr(getattr(self, attr), 'copy') and callable(getattr(getattr(self, attr), 'copy')):       #if attribute has copy method then use it
                 copyattr = selfattr.copy()

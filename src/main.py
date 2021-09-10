@@ -44,8 +44,8 @@ class App():
 
             try:
                 object.every_tick()
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
             if object.layer == collision_layer:
                 to_collide.append(object)
