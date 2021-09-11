@@ -3,19 +3,18 @@ from .bullet        import *
 from .shared        import *
 import random
 
-class EnemyType(Enum):
-    NULL        = 0
-    WANDERING   = 1
-    FOLLOWING   = 2
-    STATIONERY  = 3
-    ORBITING    = 4
-    ESCAPING    = 5 
-
+NULLENEMY   = 0
+WANDERING   = 1
+FOLLOWING   = 2
+STATIONERY  = 3
+ORBITING    = 4
+ESCAPING    = 5 
 
 class Enemy(GameObject):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position)
-        self.type = ObjectType.ENEMY
+        self.type = ENEMY
+        self.name = 'enemy'
 
         # object specific
         self.set_animation_spritesheet(basedir + 'data/images/konon.png')
@@ -37,16 +36,7 @@ class Enemy(GameObject):
         self.attack_list        = []
         self.cooldown_time      = 0                 # time from one skill to another
 
-        # collision overwrite
-        self.process_collision[ObjectType.BULLET]       =   [self.take_damage]
-
         self.team = False
-
-    def check_collideable(self, object):
-        if object.type.name == 'BULLET':
-            if object.team == self.team:
-                return False
-        return self.is_collideable[object.type]
 
     def every_tick(self):
         self.state_clock.tick()
@@ -176,7 +166,7 @@ class Enemy_Orbiting(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
 
-        self.enemy_type = EnemyType.ORBITING
+        self.enemy_type = ORBITING
         self.animation_grid = [2,2]
         self.set_animation_spritesheet(basedir + 'data/images/konon2.png')
         self.mass = 1000
@@ -202,7 +192,7 @@ class Enemy_Wandering(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
 
-        self.enemy_type = EnemyType.WANDERING
+        self.enemy_type = WANDERING
 
         self.set_animation_spritesheet(basedir + 'data/images/konon.png')
         self.mass = 1000

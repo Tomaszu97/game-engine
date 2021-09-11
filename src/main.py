@@ -28,42 +28,28 @@ class App():
         pygame.init()
         self.run()
 
-
     def handle_events(self, event):
         if event.type == pygame.QUIT:
             self.quit()
 
-
     def loop(self):
         to_collide = []
-
         for object in all_objects:
             # w, h = pygame.display.get_surface().get_size()
-            # if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != ObjectType.PLAYER:
+            # if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != PLAYER:
             #   object.kill()
-
             try:
                 object.every_tick()
             except Exception as e:
                 print(e)
-
             if object.layer == collision_layer:
                 to_collide.append(object)
 
-        #collisions
-        self.collision_manager.check_all(to_collide)
-
-        for object in to_collide:
-            if object.to_kill is True:
-                try:
-                    object.kill()
-                except:
-                    pass
-
-
+        self.collision_manager.handle_all_collisions(to_collide)
 
     def render(self):
-        self.surface.fill((0,0,0,255))
+        self.surface.fill((0, 0, 0, 255))
+
         try:
             #TODO do better
             camera_position.x, camera_position.y = [ ( obj.position.x - (window_size[0]/2) + (obj.size.x/2) , obj.position.y - (window_size[1]/2) + (obj.size.y/2) ) for obj in all_objects if obj.type == ObjectType.PLAYER ][0]
@@ -81,10 +67,9 @@ class App():
 
 
     def quit(self):
-        killall()
+        all_objects.clear()
         self.running = False
         pygame.quit()
-
 
     def run(self):
         while(self.running):

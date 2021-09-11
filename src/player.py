@@ -6,7 +6,7 @@ from .shared        import *
 class Player(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
         super().__init__(parent, position)
-        self.type = ObjectType.PLAYER
+        self.type = PLAYER
         self.name = 'player'
         self.animation_grid = [4,8]
         self.set_animation_spritesheet(resources.player_small_pixel)
@@ -27,23 +27,7 @@ class Player(GameObject):
         self.contact_damage     = 0
         self.damage             = 30
 
-        # collision
         self.team = True
-
-        # collision overwrite
-        self.is_collideable[ObjectType.SPAWNER]    = False
-        self.is_collideable[ObjectType.TRAPDOOR]   = True
-
-        self.process_collision[ObjectType.ENEMY]    = [self.bounce, self.take_damage]
-        self.process_collision[ObjectType.BULLET]   = [self.take_damage]
-
-
-    def check_collideable(self, object):
-        if object.type.name == 'BULLET':
-            if object.team == self.team:
-                return False
-        return self.is_collideable[object.type]
-
 
     def every_tick(self):
         self.bullet_clock.tick()
@@ -85,7 +69,7 @@ class Player(GameObject):
         if pressed[pygame.K_p]:
             self.change_animation_track(5)
             any=True
-        
+
         if speed_vector != (0, 0):
             speed_vector = speed_vector.normalize() * self.speed
         self.movement_speed = speed_vector

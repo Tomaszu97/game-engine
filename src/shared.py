@@ -10,7 +10,7 @@ window_position  = (5, 35)
 tick = 75
 
 display_hitboxes = False
-display_borders  = False
+display_borders  = True
 display_names    = False
 display_velocity = False
 

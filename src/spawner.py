@@ -12,7 +12,7 @@ class Spawner(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0), spawn_object = None, schedule_period=  1000):
         super().__init__(parent, position)
 
-        self.type  = ObjectType.SPAWNER
+        self.type  = SPAWNER
         self.name  = 'spawner'
         self.set_animation_spritesheet(resources.spawner)
         self.layer = collision_layer + 1
@@ -25,20 +25,6 @@ class Spawner(GameObject):
         self.schedule_period = schedule_period
         self.schedule_once   = False
         self.running         = False
-
-        # collision overwrite
-        self.is_collideable[ObjectType.NULL]       = False
-        self.is_collideable[ObjectType.PLAYER]     = False
-        self.is_collideable[ObjectType.ALLY]       = False
-        self.is_collideable[ObjectType.ENEMY]      = False
-        self.is_collideable[ObjectType.SPAWNER]    = False
-        self.is_collideable[ObjectType.BULLET]     = False
-        self.is_collideable[ObjectType.CONTAINER]  = False
-        self.is_collideable[ObjectType.DECORATION] = False
-        self.is_collideable[ObjectType.LABEL]      = False
-        self.is_collideable[ObjectType.WALL]       = False
-        self.is_collideable[ObjectType.TRAPDOOR]   = False
-        self.is_collideable[ObjectType.DIALOG]     = False
 
     def start(self):
         self.counter = 0
