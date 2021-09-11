@@ -6,7 +6,7 @@ window_position  = (5, 35)
 tick = 75
 
 display_hitboxes = False
-display_borders  = False
+display_borders  = True
 display_names    = False
 display_velocity = False
 
@@ -18,7 +18,7 @@ slowdown_factor  = 0.99
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 #TODO - this is temporary
-resources        = ImageController()
+resources = ImageController()
 for filename in os.listdir(f'{BASEDIR}/../data/images/'):
     print(filename)
     if filename.endswith('.png'):
