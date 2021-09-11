@@ -1,4 +1,4 @@
-from pygame        import Rect
+from pygame import Rect
 import shared
 
 class Collision_Manager():

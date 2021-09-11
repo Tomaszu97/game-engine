@@ -18,7 +18,7 @@ class Enemy(GameObject):
         self.type = ObjectType.ENEMY
 
         # object specific
-        self.set_animation_spritesheet('../data/images/konon.png')
+        self.set_animation_spritesheet(f'{BASEDIR}/../data/images/konon.png')
         self.target_list = target_list
         self.target = self.choose_target()
         self.hp = 100
@@ -38,26 +38,7 @@ class Enemy(GameObject):
         self.cooldown_time      = 0                 # time from one skill to another
 
         # collision overwrite
-        self.is_collideable[ObjectType.NULL]            =   True
-        self.is_collideable[ObjectType.PLAYER]          =   True
-        self.is_collideable[ObjectType.ALLY]            =   True
-        self.is_collideable[ObjectType.ENEMY]           =   True
-        self.is_collideable[ObjectType.SPAWNER]         =   True
-        self.is_collideable[ObjectType.BULLET]          =   True
-        self.is_collideable[ObjectType.CONTAINER]       =   False
-        self.is_collideable[ObjectType.DECORATION]      =   False
-        self.is_collideable[ObjectType.LABEL]           =   False
-        self.is_collideable[ObjectType.WALL]            =   True
-        self.is_collideable[ObjectType.TRAPDOOR]        =   False
-        self.is_collideable[ObjectType.DIALOG]          =   False
-
-        self.process_collision[ObjectType.NULL]         =   [self.bounce]
-        self.process_collision[ObjectType.PLAYER]       =   [self.bounce]
-        self.process_collision[ObjectType.ALLY]         =   [self.bounce]
-        self.process_collision[ObjectType.ENEMY]        =   [self.bounce]
-        self.process_collision[ObjectType.SPAWNER]      =   [self.bounce]
         self.process_collision[ObjectType.BULLET]       =   [self.take_damage]
-        self.process_collision[ObjectType.WALL]         =   [self.bounce]
 
         self.team = False
 
@@ -151,7 +132,7 @@ class Enemy(GameObject):
     # shoots a bullet every 'cooldown_time' seconds
     def shoot(self):
         bullet = Bullet(self)
-        bullet.move( (self.position+(self.size/2) - bullet.size/2))
+        bullet.move((self.position+(self.size/2) - bullet.size/2))
 
         shooting_direction = Vector2(self.target.position) -  (self.position)
         shooting_direction = shooting_direction.normalize()
@@ -185,13 +166,11 @@ class Enemy_Following(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
         self.enemy_type = EnemyType.FOLLOWING
-        self.set_animation_spritesheet('../data/images/konon.png')
+        self.set_animation_spritesheet(f'{BASEDIR}/../data/images/konon.png')
         self.animation_speed = 0.25
         self.mass = 1000
         self.attack_list = [self.shoot]
 
-    def every_tick(self):
-        return super().every_tick()
 
 class Enemy_Orbiting(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
@@ -199,7 +178,7 @@ class Enemy_Orbiting(Enemy):
 
         self.enemy_type = EnemyType.ORBITING
         self.animation_grid = [2,2]
-        self.set_animation_spritesheet('../data/images/konon2.png')
+        self.set_animation_spritesheet(f'{BASEDIR}/../data/images/konon2.png')
         self.mass = 1000
         self.attack_list = [self.shoot]
 
@@ -218,8 +197,6 @@ class Enemy_Orbiting(Enemy):
                 self.attack_state = self.choose_skill
                 self.state = self.attack
 
-    def every_tick(self):
-        return super().every_tick()
 
 class Enemy_Wandering(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
@@ -227,7 +204,7 @@ class Enemy_Wandering(Enemy):
 
         self.enemy_type = EnemyType.WANDERING
 
-        self.set_animation_spritesheet('../data/images/konon.png')
+        self.set_animation_spritesheet(f'{BASEDIR}/../data/images/konon.png')
         self.mass = 1000
         self.idle_to_patrol = 500
 
