@@ -16,6 +16,8 @@ import os
 import code
 import copy
 
+tmp_input = None
+
 class App():
     def __init__(self):
         self.children = []
@@ -31,6 +33,18 @@ class App():
     def handle_events(self, event):
         if event.type == pygame.QUIT:
             self.quit()
+        try:
+            if tmp_input.active:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        exec(tmp_input.text)
+                        tmp_input.text = ''
+                    elif event.key == pygame.K_BACKSPACE:
+                        tmp_input.text = tmp_input.text[:-1]
+                    else: 
+                        tmp_input.text += event.unicode
+        except:
+            pass
 
     def loop(self):
         to_collide = []
