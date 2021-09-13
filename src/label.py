@@ -47,13 +47,5 @@ class TextInput(GameObject):
             else:
                 self.active = False
         
-        if self.active:
-            pressed = pygame.key.get_pressed()
-            if pressed[pygame.K_w]:
-                self.text += 'w'
-                self.animation_spritesheet.fill(self.bgcolor)
-                self.animation_spritesheet.blit(self.text_font.render( self.text, False, self.text_color, self.bgcolor ), (0,0))
-            if pressed[pygame.K_q]:
-                self.text = self.text[:-1]
-                self.animation_spritesheet.fill(self.bgcolor)
-                self.animation_spritesheet.blit(self.text_font.render( self.text, False, self.text_color, self.bgcolor ), (0,0))
+        self.animation_spritesheet.fill(self.bgcolor)
+        self.animation_spritesheet.blit(self.text_font.render( self.text, False, self.text_color, self.bgcolor ), (0,0))
