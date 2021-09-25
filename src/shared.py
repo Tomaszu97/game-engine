@@ -13,6 +13,7 @@ display_velocity = False
 collision_layer  = 4
 
 all_objects      = []
+event_receiver_objects = []
 slowdown_factor  = 0.99
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
@@ -20,10 +21,10 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 #TODO - this is temporary
 resources = ImageController()
 for filename in os.listdir(f'{BASEDIR}/../data/images/'):
-    print(filename)
+    #print(filename)
     if filename.endswith('.png'):
         newname = str(filename).split('.')[0]
-        print(newname)
+        #print(newname)
         setattr(resources, newname, f'{BASEDIR}/../data/images/{filename}')
         #resources.newname  =   f'../data/images/{filename}'
 

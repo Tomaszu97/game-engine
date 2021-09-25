@@ -102,7 +102,7 @@ class CollisionManager():
             if not trapdoor.triggered:
                 trapdoor.triggered = True
                 trapdoor.handler()
-        
+
         # bullet kys - kill a bullet
         def BKS(object, other_object):
             # optimize it
@@ -111,7 +111,7 @@ class CollisionManager():
             else:
                 bullet = other_object
             bullet.kill()  
-        
+
         # matrix defining collision behavior
         self.collision_matrix = [
         # NULL  PLAYER         ALLY           ENEMY          SPAWNER  BULLET CONTAINER DECORATION   LABEL WALL  TRAPDOOR DIALOG TEXTINPUT
@@ -129,7 +129,7 @@ class CollisionManager():
         [ None, None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
         [ None, None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT
         ]
-    
+
     def get_on_collide(self, object, other_object):
         #TODO - handle invincibility
         # if self.is_invincible:
@@ -154,4 +154,4 @@ class CollisionManager():
                 if object is not other_object:
                     self.handle_collision(object, other_object)
 
-        
+
