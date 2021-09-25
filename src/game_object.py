@@ -132,7 +132,7 @@ class GameObject(Sprite):
     def set_size(self, size):
         self.size = size
         self.set_hitbox_offset(self.hitbox_offset)
-        
+
     # set difference between object size and its hitbox
     def set_hitbox_offset(self, offset):
         self.hitbox_offset = offset
@@ -145,7 +145,7 @@ class GameObject(Sprite):
         self.animation_spritesheet = Surface((self.size[0],self.size[1]), pygame.SRCALPHA, 32)
         self.animation_spritesheet.fill(color)
         self.surface = Surface((self.size[0],self.size[1]), pygame.SRCALPHA, 32)
-        
+
     # change spritesheet
     def set_animation_spritesheet(self, spritesheet):
         if isinstance(spritesheet, Surface):
@@ -198,3 +198,6 @@ class GameObject(Sprite):
                 copyattr = copy.deepcopy(selfattr)
 
         return copyobj
+
+    def on_event(self):
+        pass

@@ -154,4 +154,3 @@ class CollisionManager():
                 if object is not other_object:
                     self.handle_collision(object, other_object)
 
-        

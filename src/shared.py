@@ -16,6 +16,7 @@ display_velocity = False
 
 collision_layer  = 4
 all_objects      = []
+event_receiver_objects = []
 slowdown_factor  = 0.99
 camera_position  = Vector2(0.0, 0.0)
 

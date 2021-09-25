@@ -16,8 +16,6 @@ import os
 import code
 import copy
 
-tmp_input = None
-
 class App():
     def __init__(self):
         self.children = []
@@ -28,23 +26,15 @@ class App():
         #self.surface = pygame.display.set_mode((window_size[0], window_size[1]), HWSURFACE | DOUBLEBUF | FULLSCREEN)
         self.collision_manager = Collision_Manager()
         pygame.init()
+        pygame.key.set_repeat(200,60)
         self.run()
 
     def handle_events(self, event):
         if event.type == pygame.QUIT:
             self.quit()
-        try:
-            if tmp_input.active:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        exec(tmp_input.text)
-                        tmp_input.text = ''
-                    elif event.key == pygame.K_BACKSPACE:
-                        tmp_input.text = tmp_input.text[:-1]
-                    else: 
-                        tmp_input.text += event.unicode
-        except:
-            pass
+        else:
+            for x in event_receiver_objects:
+                x.on_event(event, self)
 
     def loop(self):
         to_collide = []
@@ -63,7 +53,6 @@ class App():
 
     def render(self):
         self.surface.fill((0, 0, 0, 255))
-
         try:
             #TODO do better
             camera_position.x, camera_position.y = [ ( obj.position.x - (window_size[0]/2) + (obj.size.x/2) , obj.position.y - (window_size[1]/2) + (obj.size.y/2) ) for obj in all_objects if obj.type == ObjectType.PLAYER ][0]
@@ -76,9 +65,7 @@ class App():
         except Exception as e:
             print(e)
             pass
-
         pygame.display.flip()
-
 
     def quit(self):
         all_objects.clear()
@@ -93,6 +80,9 @@ class App():
 
             for event in pygame.event.get():
                 self.handle_events(event)
+
+    def exec(self, cmd):
+        exec(cmd)
 
 Thread(target=App).start()
 time.sleep(1)
