@@ -152,7 +152,7 @@ class Enemy(GameObject):
             self.state = self.idle 
 
 
-class Enemy_Following(Enemy):
+class EnemyFollowing(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
         self.enemy_type = EnemyType.FOLLOWING
@@ -162,7 +162,7 @@ class Enemy_Following(Enemy):
         self.attack_list = [self.shoot]
 
 
-class Enemy_Orbiting(Enemy):
+class EnemyOrbiting(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
 
@@ -188,7 +188,7 @@ class Enemy_Orbiting(Enemy):
                 self.state = self.attack
 
 
-class Enemy_Wandering(Enemy):
+class EnemyWandering(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
 

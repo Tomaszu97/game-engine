@@ -86,6 +86,14 @@ class CollisionManager():
         def MDM(object, other_object):
             return TDM(other_object, object)
 
+        # kill yourself
+        def KYS(object, other_object):
+            object.kill()
+
+        # kill him
+        def KHM(object, other_object):
+            return KYS(other_object, object)
+
         # teamwork - stop processing collision if both objects are in the same team
         def TMW(object, other_object):
             # stop processing collision if both are in the same team
@@ -114,20 +122,20 @@ class CollisionManager():
 
         # matrix defining collision behavior
         self.collision_matrix = [
-        # NULL  PLAYER         ALLY           ENEMY          SPAWNER  BULLET CONTAINER DECORATION   LABEL WALL  TRAPDOOR DIALOG TEXTINPUT
-        [ None,                                                                                                                          ],# NULL
-        [ None, None,                                                                                                                    ],# PLAYER
-        [ None, None,          None,                                                                                                     ],# ALLY
-        [ None, [HIT,MDM],     [HIT,MDM],     None,                                                                                      ],# ENEMY
-        [ None, None,          None,          None,          None,                                                                       ],# SPAWNER
-        [ None, [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
-        [ None, [HIT],         [HIT],         None,          None,    None,  None,                                                       ],# CONTAINER
-        [ None, None,          None,          None,          None,    None,  None,     None,                                             ],# DECORATION
-        [ None, None,          None,          None,          None,    None,  None,     None,        None,                                ],# LABEL
-        [ None, [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
-        [ None, [TRP],         None,          None,          None,    None,  None,     None,        None, None, None,                    ],# TRAPDOOR
-        [ None, None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
-        [ None, None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT
+        # NULL      PLAYER         ALLY           ENEMY          SPAWNER  BULLET CONTAINER DECORATION   LABEL WALL  TRAPDOOR DIALOG TEXTINPUT
+        [ [BNC],                                                                                                                              ],# NULL
+        [ [BNC],    None,                                                                                                                    ],# PLAYER
+        [ None,     None,          None,                                                                                                     ],# ALLY
+        [ None,     [HIT,MDM],     [HIT,MDM],     None,                                                                                      ],# ENEMY
+        [ None,     None,          None,          None,          None,                                                                       ],# SPAWNER
+        [ [KHM],    [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
+        [ None,     [HIT],         [HIT],         None,          None,    None,  None,                                                       ],# CONTAINER
+        [ None,     None,          None,          None,          None,    None,  None,     None,                                             ],# DECORATION
+        [ None,     None,          None,          None,          None,    None,  None,     None,        None,                                ],# LABEL
+        [ None,     [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
+        [ None,     [TRP],         None,          None,          None,    None,  None,     None,        None, None, None,                    ],# TRAPDOOR
+        [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
+        [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT
         ]
 
     def get_on_collide(self, object, other_object):

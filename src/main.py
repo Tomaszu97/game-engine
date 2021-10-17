@@ -15,6 +15,7 @@ import random
 import os
 import code
 import copy
+import random
 
 class App():
     def __init__(self):
@@ -52,7 +53,7 @@ class App():
         self.collision_manager.handle_all_collisions(to_collide)
 
     def render(self):
-        self.surface.fill((0, 0, 0, 255))
+        self.surface.fill(background_color)
         try:
             #TODO do better
             camera_position.x, camera_position.y = [ ( obj.position.x - (window_size[0]/2) + (obj.size.x/2) , obj.position.y - (window_size[1]/2) + (obj.size.y/2) ) for obj in all_objects if obj.type == ObjectType.PLAYER ][0]
