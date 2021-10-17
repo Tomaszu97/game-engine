@@ -51,6 +51,7 @@ class GameObject(Sprite):
         self.movement_speed         = Vector2(0,0)
         self.movement_acceleration  = Vector2(0,0)
         self.movement_angular_speed = 0.0
+        self.slowdown_factor        = slowdown_factor
 
         # animation related
         self.animation_spritesheet  = Surface((self.size[0],self.size[1]), pygame.SRCALPHA, 32)
@@ -120,7 +121,7 @@ class GameObject(Sprite):
 
         #accelrate, break a bit and move
         self.movement_speed += self.movement_acceleration
-        self.movement_speed *= slowdown_factor
+        self.movement_speed *= self.slowdown_factor
         self.move(self.movement_speed)
 
     # constrain value in between range

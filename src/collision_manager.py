@@ -10,23 +10,23 @@ class CollisionManager():
         # elastic collision
         def BNC(object, other_object, elastic=True):
             sign = lambda x: 1 if x>=0 else -1
-        
+
             # return if object width or height is 0
             if other_object.hitbox_size.x == 0 or other_object.hitbox_size.y == 0:
                 return
-        
+
             # move them away and collide
             if Rect(object.hitbox_position, object.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
                 relative_position = object.position + (object.size/2) - other_object.position - (other_object.size/2)
                 total_speed = object.movement_speed + other_object.movement_speed
-        
+
                 if object.mass == 0 or other_object.mass == 0:
                     mass_ratio = 1
                     other_mass_ratio = 1
                 else:
                     mass_ratio = object.mass / (object.mass+other_object.mass)
                     other_mass_ratio = other_object.mass / (object.mass+other_object.mass)  
-        
+
                 # relpos from other to me
                 if relative_position.x < 0:
                     # self approach from the left
@@ -40,7 +40,7 @@ class CollisionManager():
                 else:
                     # self approach from below
                     y_intersection = round(other_object.hitbox_position.y+other_object.hitbox_size.y-object.hitbox_position.y)
-        
+
                 #TODO optimize it
                 if abs(x_intersection) > abs(y_intersection):
                     if object.mass != 0:
@@ -68,11 +68,11 @@ class CollisionManager():
                             other_object.movement_speed.x = -sign(x_intersection)*abs(mass_ratio*total_speed.x)
                         else:
                             other_object.movement_speed.x = 0
-        
+
         # inelastic collision
         def HIT(object, other_object):
             return BNC(object, other_object, elastic=False)
-        
+
         # take damage - first object takes damage
         def TDM(object, other_object):
             try:
@@ -81,17 +81,25 @@ class CollisionManager():
                     object.kill()
             except AttributeError:
                 return
-        
+
         # make damage - second object takes damage
         def MDM(object, other_object):
             return TDM(other_object, object)
-        
+
+        # kill yourself
+        def KYS(object, other_object):
+            object.kill()
+
+        # kill him
+        def KHM(object, other_object):
+            return KYS(other_object, object)
+
         # teamwork - stop processing collision if both objects are in the same team
         def TMW(object, other_object):
             # stop processing collision if both are in the same team
             if object.team == other_object.team:
                 return False
-        
+
         # call trapdoor handler if trapdoor is not triggered
         def TRP(object, other_object):
             # optimize it - maybe take advantage of collision order (higher first)
@@ -114,20 +122,20 @@ class CollisionManager():
 
         # matrix defining collision behavior
         self.collision_matrix = [
-        # NULL  PLAYER         ALLY           ENEMY          SPAWNER  BULLET CONTAINER DECORATION   LABEL WALL  TRAPDOOR DIALOG TEXTINPUT
-        [ None,                                                                                                                          ],# NULL
-        [ None, None,                                                                                                                    ],# PLAYER
-        [ None, None,          None,                                                                                                     ],# ALLY
-        [ None, [HIT,MDM],     [HIT,MDM],     None,                                                                                      ],# ENEMY
-        [ None, None,          None,          None,          None,                                                                       ],# SPAWNER
-        [ None, [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
-        [ None, [HIT],         [HIT],         None,          None,    None,  None,                                                       ],# CONTAINER
-        [ None, None,          None,          None,          None,    None,  None,     None,                                             ],# DECORATION
-        [ None, None,          None,          None,          None,    None,  None,     None,        None,                                ],# LABEL
-        [ None, [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
-        [ None, [TRP],         None,          None,          None,    None,  None,     None,        None, None, None,                    ],# TRAPDOOR
-        [ None, None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
-        [ None, None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT
+        # NULL      PLAYER         ALLY           ENEMY          SPAWNER  BULLET CONTAINER DECORATION   LABEL WALL  TRAPDOOR DIALOG TEXTINPUT
+        [ [BNC],                                                                                                                              ],# NULL
+        [ [BNC],    None,                                                                                                                    ],# PLAYER
+        [ None,     None,          None,                                                                                                     ],# ALLY
+        [ None,     [HIT,MDM],     [HIT,MDM],     None,                                                                                      ],# ENEMY
+        [ None,     None,          None,          None,          None,                                                                       ],# SPAWNER
+        [ [KHM],    [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
+        [ None,     [HIT],         [HIT],         None,          None,    None,  None,                                                       ],# CONTAINER
+        [ None,     None,          None,          None,          None,    None,  None,     None,                                             ],# DECORATION
+        [ None,     None,          None,          None,          None,    None,  None,     None,        None,                                ],# LABEL
+        [ None,     [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
+        [ None,     [TRP],         None,          None,          None,    None,  None,     None,        None, None, None,                    ],# TRAPDOOR
+        [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
+        [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT
         ]
 
     def get_on_collide(self, object, other_object):

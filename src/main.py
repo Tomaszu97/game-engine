@@ -15,6 +15,7 @@ import random
 import os
 import code
 import copy
+import random
 
 class App():
     def __init__(self):
@@ -51,7 +52,7 @@ class App():
         self.collision_manager.handle_all_collisions(to_collide)
 
     def render(self):
-        self.surface.fill((70,180,255,255))
+        self.surface.fill(background_color)
         try:
             #draw object in layered order
             for layer in range(min(object.layer for object in all_objects), max(object.layer for object in all_objects)+1):
@@ -86,33 +87,52 @@ time.sleep(1)
 #TODO music doesnt play if file imported from somewhere
 #TODO replace above time.sleep to sth that makes more sense
 
-TiledManager().load_map(f'{BASEDIR}/../data/maps/nice_map.tmx')
+#TiledManager().load_map(f'{BASEDIR}/../data/maps/nice_map.tmx')
+
 
 pl = Player()
-tr = Trapdoor()
-tr2 = Trapdoor()
-pl.move(200,200)
-tr.move(200,200)
-tr2.move(200,350)
-tr.reset()
-tr2.reset()
+pl.move((window_size[0]/2)-(pl.size[0]/2),(window_size[1]/2)-(pl.size[1]/2))
+pl.set_animation_spritesheet_blank(color=(0,0,0,255))
 
-def f():
-    print('spawning enemies...')
-    Enemy_Following(target_list = [pl], position = Vector2(200.0,400.0))
-tr.handler = f
+gobjs=[]
+while True:
+    [ x.kill() for x in gobjs ]
+    gobjs = [GameObject() for _ in range(20)]
+    for idx,go in enumerate(gobjs):
+        noise_x = random.randint(0,150)
+        noise_y = random.randint(0,150)
+        go.move((idx%20)*45 + noise_x, -200 + (idx/20)*45 + noise_y)
+        go.set_animation_spritesheet_blank(color=(255,165,0,255))
+        go.slowdown_factor=1
+        go.movement_speed = Vector2(0, 14)
 
-def g():
-    print('resetting tr...')
-    tr.reset()
-    tr2.reset()
-tr2.handler = g
+    time.sleep(1)
 
-ti = TextInput()
 
-ti.set_size(Vector2(window_size[0], 24))
-ti.set_animation_spritesheet_blank(Color(0,0,255,0))
-ti.animation_spritesheet.blit(ti.text_font.render( ti.text, False, ti.text_color, ti.bgcolor ), (0,0))
-
-tmp_input = ti
-#code.interact(local=locals())
+#tr = Trapdoor()
+#tr2 = Trapdoor()
+#pl.move(200,200)
+#tr.move(200,200)
+#tr2.move(200,350)
+#tr.reset()
+#tr2.reset()
+#
+#def f():
+#    print('spawning enemies...')
+#    EnemyFollowing(target_list = [pl], position = Vector2(200.0,400.0))
+#tr.handler = f
+#
+#def g():
+#    print('resetting tr...')
+#    tr.reset()
+#    tr2.reset()
+#tr2.handler = g
+#
+#ti = TextInput()
+#
+#ti.set_size(Vector2(window_size[0], 24))
+#ti.set_animation_spritesheet_blank(Color(0,0,255,0))
+#ti.animation_spritesheet.blit(ti.text_font.render( ti.text, False, ti.text_color, ti.bgcolor ), (0,0))
+#
+#tmp_input = ti
+##code.interact(local=locals())
