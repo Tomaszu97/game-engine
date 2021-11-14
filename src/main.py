@@ -87,52 +87,51 @@ time.sleep(1)
 #TODO music doesnt play if file imported from somewhere
 #TODO replace above time.sleep to sth that makes more sense
 
-#TiledManager().load_map(f'{BASEDIR}/../data/maps/nice_map.tmx')
+#pl = Player()
+#pl.move((window_size[0]/2)-(pl.size[0]/2),(window_size[1]/2)-(pl.size[1]/2))
+#pl.set_animation_spritesheet_blank(color=(0,0,0,255))
+#
+#gobjs=[]
+#while True:
+#    [ x.kill() for x in gobjs ]
+#    gobjs = [GameObject() for _ in range(20)]
+#    for idx,go in enumerate(gobjs):
+#        noise_x = random.randint(0,150)
+#        noise_y = random.randint(0,150)
+#        go.move((idx%20)*45 + noise_x, -200 + (idx/20)*45 + noise_y)
+#        go.set_animation_spritesheet_blank(color=(255,165,0,255))
+#        go.slowdown_factor=1
+#        go.movement_speed = Vector2(0, 14)
+#    time.sleep(1)
 
 
+TiledManager().load_map(f'{BASEDIR}/../data/maps/nice_map.tmx')
 pl = Player()
-pl.move((window_size[0]/2)-(pl.size[0]/2),(window_size[1]/2)-(pl.size[1]/2))
-pl.set_animation_spritesheet_blank(color=(0,0,0,255))
+pl.move(100,100)
+tr = Trapdoor()
+tr2 = Trapdoor()
+pl.move(200,200)
+tr.move(200,200)
+tr2.move(200,350)
+tr.reset()
+tr2.reset()
 
-gobjs=[]
-while True:
-    [ x.kill() for x in gobjs ]
-    gobjs = [GameObject() for _ in range(20)]
-    for idx,go in enumerate(gobjs):
-        noise_x = random.randint(0,150)
-        noise_y = random.randint(0,150)
-        go.move((idx%20)*45 + noise_x, -200 + (idx/20)*45 + noise_y)
-        go.set_animation_spritesheet_blank(color=(255,165,0,255))
-        go.slowdown_factor=1
-        go.movement_speed = Vector2(0, 14)
+def f():
+    print('spawning enemies...')
+    EnemyFollowing(target_list = [pl], position = Vector2(200.0,400.0))
+tr.handler = f
 
-    time.sleep(1)
+def g():
+    print('resetting tr...')
+    tr.reset()
+    tr2.reset()
+tr2.handler = g
 
-
-#tr = Trapdoor()
-#tr2 = Trapdoor()
-#pl.move(200,200)
-#tr.move(200,200)
-#tr2.move(200,350)
-#tr.reset()
-#tr2.reset()
-#
-#def f():
-#    print('spawning enemies...')
-#    EnemyFollowing(target_list = [pl], position = Vector2(200.0,400.0))
-#tr.handler = f
-#
-#def g():
-#    print('resetting tr...')
-#    tr.reset()
-#    tr2.reset()
-#tr2.handler = g
-#
 #ti = TextInput()
-#
+
 #ti.set_size(Vector2(window_size[0], 24))
 #ti.set_animation_spritesheet_blank(Color(0,0,255,0))
 #ti.animation_spritesheet.blit(ti.text_font.render( ti.text, False, ti.text_color, ti.bgcolor ), (0,0))
-#
 #tmp_input = ti
-##code.interact(local=locals())
+
+#code.interact(local=locals())
