@@ -4,11 +4,11 @@ import os
 window_size      = (800, 685)
 window_position  = (5, 35)
 tick = 75
-background_color = (255,127,80,255)
+background_color = (255,0,255,255)
 
 display_hitboxes = False
-display_borders  = False
-display_names    = False
+display_borders  = True
+display_names    = True
 display_velocity = False
 
 collision_layer  = 4

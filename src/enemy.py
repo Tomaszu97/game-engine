@@ -167,8 +167,8 @@ class EnemyOrbiting(Enemy):
         super().__init__(parent, position, target_list)
 
         self.enemy_type = ORBITING
-        self.animation_grid = [2,2]
-        self.set_animation_spritesheet(f'{BASEDIR}/../data/images/konon2.png')
+        self.animation_grid = [1,1]
+        self.set_animation_spritesheet(f'{BASEDIR}/../data/images/konon.png')
         self.mass = 1000
         self.attack_list = [self.shoot]
 

@@ -127,11 +127,9 @@ def g():
     tr2.reset()
 tr2.handler = g
 
-#ti = TextInput()
-
-#ti.set_size(Vector2(window_size[0], 24))
-#ti.set_animation_spritesheet_blank(Color(0,0,255,0))
-#ti.animation_spritesheet.blit(ti.text_font.render( ti.text, False, ti.text_color, ti.bgcolor ), (0,0))
-#tmp_input = ti
+ti = TextInput()
+ti.set_size(Vector2(window_size[0], 24))
+ti.set_animation_spritesheet_blank(Color(0,0,255,0))
+ti.animation_spritesheet.blit(ti.text_font.render( ti.text, False, ti.text_color, ti.bgcolor ), (0,0))
 
 #code.interact(local=locals())
