@@ -83,15 +83,17 @@ class Player(GameObject):
             self.shoot()
             self.bullet_timer = 0
 
+        # TODO remove those development features
         if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
             x = GameObject()
-            x.move(Vector2(pygame.mouse.get_pos() - (x.size/2)))
+            x.move(Vector2(pygame.mouse.get_pos() - (x.size/2) + camera_position))
             self.bullet_timer = 0
 
         if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
             x = Wall()
-            x.move(Vector2(pygame.mouse.get_pos() - (x.size/2)))
+            x.move(Vector2(pygame.mouse.get_pos() - (x.size/2) + camera_position))
             self.bullet_timer = 0
+        # //
 
     def shoot(self):
         # create bullet in the middle of player

@@ -28,7 +28,7 @@ class TextInput(GameObject):
 
         # object specific
         self.text       = '>'
-        self.text_font  = Font(f'{BASEDIR}/../data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 22)
+        self.text_font  = Font( basedir + '/data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 22)
         self.text_color = Color(0,255,0,255)
         self.active     = True
 

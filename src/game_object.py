@@ -44,7 +44,7 @@ class GameObject(Sprite):
 
         # look related
         self.surface            = Surface((self.size[0],self.size[1]), pygame.SRCALPHA, 32)
-        self.font               = Font(basedir + '/../data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 12)
+        self.font               = Font(basedir + '/data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 12)
         self.bgcolor            = Color(0,0,0,0)
 
         # movement related

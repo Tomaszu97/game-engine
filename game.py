@@ -12,9 +12,9 @@ tr2.reset()
 
 def f():
     print('spawning enemies...')
-    Enemy_Following(target_list = [pl], position = Vector2(200.0,400.0))
-    Enemy_Following(target_list = [pl], position = Vector2(400.0,200.0))
-    Enemy_Following(target_list = [pl], position = Vector2(400.0,400.0))
+    EnemyFollowing(target_list = [pl], position = Vector2(200.0,400.0))
+    EnemyFollowing(target_list = [pl], position = Vector2(400.0,200.0))
+    EnemyFollowing(target_list = [pl], position = Vector2(400.0,400.0))
 tr.set_handler(f)
 
 def g():

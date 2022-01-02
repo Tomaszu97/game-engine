@@ -123,16 +123,16 @@ class CollisionManager():
         # matrix defining collision behavior
         self.collision_matrix = [
         # NULL      PLAYER         ALLY           ENEMY          SPAWNER  BULLET CONTAINER DECORATION   LABEL WALL  TRAPDOOR DIALOG TEXTINPUT
-        [ [BNC],                                                                                                                              ],# NULL
-        [ [BNC],    None,                                                                                                                    ],# PLAYER
+        [ [HIT],                                                                                                                             ],# NULL
+        [ [HIT],    None,                                                                                                                    ],# PLAYER
         [ None,     None,          None,                                                                                                     ],# ALLY
         [ None,     [HIT,MDM],     [HIT,MDM],     None,                                                                                      ],# ENEMY
         [ None,     None,          None,          None,          None,                                                                       ],# SPAWNER
-        [ [KHM],    [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
+        [ None,     [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
         [ None,     [HIT],         [HIT],         None,          None,    None,  None,                                                       ],# CONTAINER
         [ None,     None,          None,          None,          None,    None,  None,     None,                                             ],# DECORATION
         [ None,     None,          None,          None,          None,    None,  None,     None,        None,                                ],# LABEL
-        [ None,     [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
+        [ [HIT],    [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
         [ None,     [TRP],         None,          None,          None,    None,  None,     None,        None, None, None,                    ],# TRAPDOOR
         [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
         [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT

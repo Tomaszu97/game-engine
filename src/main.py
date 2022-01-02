@@ -25,7 +25,7 @@ class App():
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (window_position[0], window_position[1])
         self.surface = pygame.display.set_mode((window_size[0], window_size[1]), HWSURFACE | DOUBLEBUF)
         #self.surface = pygame.display.set_mode((window_size[0], window_size[1]), HWSURFACE | DOUBLEBUF | FULLSCREEN)
-        self.collision_manager = Collision_Manager()
+        self.collision_manager = CollisionManager()
         pygame.init()
         pygame.key.set_repeat(200,60)
         self.run()
@@ -56,7 +56,7 @@ class App():
         self.surface.fill(background_color)
         try:
             #TODO do better
-            camera_position.x, camera_position.y = [ ( obj.position.x - (window_size[0]/2) + (obj.size.x/2) , obj.position.y - (window_size[1]/2) + (obj.size.y/2) ) for obj in all_objects if obj.type == ObjectType.PLAYER ][0]
+            camera_position.x, camera_position.y = [ ( obj.position.x - (window_size[0]/2) + (obj.size.x/2) , obj.position.y - (window_size[1]/2) + (obj.size.y/2) ) for obj in all_objects if obj.type == PLAYER ][0]
 
             #draw object in layered order
             for layer in range(min(object.layer for object in all_objects), max(object.layer for object in all_objects)+1):

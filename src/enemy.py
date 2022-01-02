@@ -155,7 +155,7 @@ class Enemy(GameObject):
 class EnemyFollowing(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
-        self.enemy_type = EnemyType.FOLLOWING
+        self.enemy_type = FOLLOWING
         self.set_animation_spritesheet(basedir + 'data/images/konon.png')
         self.animation_speed = 0.25
         self.mass = 1000

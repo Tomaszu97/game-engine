@@ -15,9 +15,20 @@ class Trapdoor(GameObject):
         self.triggered = False
         self.handler = self.default_handler
 
+    # runs when player enters trapdoor
+    def trap_trigger(self, object, other_object):
+        if self.triggered:
+            return
+        self.triggered = True
+        self.handler()
+
     # resets trapdoor
     def reset(self):
         self.triggered = False
+
+    # set handler function run when trapdoor triggers
+    def set_handler(self, handler):
+        self.handler = handler
 
     # default trapdoor handler
     def default_handler(self):
