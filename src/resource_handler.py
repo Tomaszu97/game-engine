@@ -1,5 +1,5 @@
-from game_object   import *
-from shared        import *
+from .game_object   import *
+from .shared        import *
 import weakref
 
 class ResourceController(object):

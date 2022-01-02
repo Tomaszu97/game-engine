@@ -1,5 +1,9 @@
-from resource_handler  import  *
+from .resource_handler  import  *
 import os
+
+#TODO do better
+basedir = os.path.dirname(os.path.realpath(__file__))
+basedir = os.path.dirname(basedir) + '/'
 
 window_size      = (800, 685)
 window_position  = (5, 35)
@@ -11,19 +15,20 @@ display_names    = False
 display_velocity = False
 
 collision_layer  = 4
-
 all_objects      = []
 slowdown_factor  = 0.99
+camera_position  = Vector2(0.0, 0.0)
+
 
 #TODO - this is temporary
 resources        = ImageController()
-for filename in os.listdir('../data/images/'):
+for filename in os.listdir(basedir + 'data/images/'):
     print(filename)
     if filename.endswith('.png'):
         newname = str(filename).split('.')[0]
         print(newname)
-        setattr(resources, newname, f'../data/images/{filename}')
-        #resources.newname  =   f'../data/images/{filename}'
+        setattr(resources, newname, basedir + f'data/images/{filename}')
+        #resources.newname  =   basedir + f'data/images/{filename}'
 
 #TODO - temp
 print(resources)

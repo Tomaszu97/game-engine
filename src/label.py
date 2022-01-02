@@ -1,5 +1,5 @@
-from game_object   import *
-from shared        import *
+from .game_object   import *
+from .shared        import *
 
 class Label(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
@@ -11,10 +11,10 @@ class Label(GameObject):
         self.set_animation_spritesheet(resources.label)
         self.set_hitbox_offset(12)
         self.layer = collision_layer
-        
+
         #object specific
         self.text = 'Sample Text'
-        
+
         #collision overwrite
         self.is_collideable[ObjectType.NULL]       = False
         self.is_collideable[ObjectType.PLAYER]     = False

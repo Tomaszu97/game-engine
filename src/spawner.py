@@ -1,12 +1,12 @@
-from bullet        import *
-from decoration    import *
-from enemy         import *
-from game_object   import *
-from label         import *
-from player        import *
-from shared        import *
-from trapdoor      import *
-from wall          import *
+from .bullet        import *
+from .decoration    import *
+from .enemy         import *
+from .game_object   import *
+from .label         import *
+from .player        import *
+from .shared        import *
+from .trapdoor      import *
+from .wall          import *
 
 class Spawner(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0), spawn_object = None, schedule_period=  1000):

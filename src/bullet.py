@@ -1,5 +1,5 @@
-from game_object   import *
-from shared        import *
+from .game_object   import *
+from .shared        import *
 
 class Bullet(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
@@ -9,7 +9,7 @@ class Bullet(GameObject):
         self.animation_grid         =   [1,5]   #always before setting spritesheet
         self.animation_speed        =   4
         self.set_animation_spritesheet(resources.smallbullet)
-        self.set_hitbox_offset(1)
+        self.set_hitbox_offset(3)
         self.layer = collision_layer
         self.mass = 1
 

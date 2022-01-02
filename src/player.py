@@ -1,18 +1,19 @@
-from game_object   import *
-from wall          import *
-from bullet        import *
-from shared        import *
+from .game_object   import *
+from .wall          import *
+from .bullet        import *
+from .shared        import *
 
 class Player(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
         super().__init__(parent, position)
         self.type = ObjectType.PLAYER
         self.name = 'player'
-        self.animation_grid = [6,4]
-        self.set_animation_spritesheet(resources.smallcoloredplayer)
+        self.animation_grid = [4,8]
+        self.set_animation_spritesheet(resources.player_small_pixel)
         self.mass = 700
         self.layer = collision_layer
-        self.set_hitbox_offset(6)
+        self.hitbox_size = Vector2(self.size.x, 5)
+        self.set_hitbox_offset(4)
         self.animation_speed = 6
 
         # object specific
@@ -123,10 +124,11 @@ class Player(GameObject):
     def shoot(self):
         # create bullet in the middle of player
         bullet = Bullet(self)
-        bullet.move(self.position)
+        #TODO think why its not /2
+        bullet.move(self.position + (self.size/4))
 
         # calculate where to shoot
-        shooting_direction = Vector2(pygame.mouse.get_pos()) - (self.position+(self.size/2))
+        shooting_direction = Vector2(pygame.mouse.get_pos() - (Vector2(window_size)/2))
         shooting_direction = shooting_direction.normalize()
         try:
             bullet.movement_speed = shooting_direction*bullet.speed

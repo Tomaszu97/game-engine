@@ -1,6 +1,6 @@
-from game_object   import *
-from bullet        import *
-from shared        import *
+from .game_object   import *
+from .bullet        import *
+from .shared        import *
 import random
 
 class EnemyType(Enum):
@@ -18,7 +18,7 @@ class Enemy(GameObject):
         self.type = ObjectType.ENEMY
 
         # object specific
-        self.set_animation_spritesheet('../data/images/konon.png')
+        self.set_animation_spritesheet(basedir + 'data/images/konon.png')
         self.target_list = target_list
         self.target = self.choose_target()
         self.hp = 100
@@ -185,7 +185,7 @@ class Enemy_Following(Enemy):
     def __init__(self, parent=None, position=Vector2(0.0, 0.0), target_list=None):
         super().__init__(parent, position, target_list)
         self.enemy_type = EnemyType.FOLLOWING
-        self.set_animation_spritesheet('../data/images/konon.png')
+        self.set_animation_spritesheet(basedir + 'data/images/konon.png')
         self.animation_speed = 0.25
         self.mass = 1000
         self.attack_list = [self.shoot]
@@ -199,7 +199,7 @@ class Enemy_Orbiting(Enemy):
 
         self.enemy_type = EnemyType.ORBITING
         self.animation_grid = [2,2]
-        self.set_animation_spritesheet('../data/images/konon2.png')
+        self.set_animation_spritesheet(basedir + 'data/images/konon2.png')
         self.mass = 1000
         self.attack_list = [self.shoot]
 
@@ -227,7 +227,7 @@ class Enemy_Wandering(Enemy):
 
         self.enemy_type = EnemyType.WANDERING
 
-        self.set_animation_spritesheet('../data/images/konon.png')
+        self.set_animation_spritesheet(basedir + 'data/images/konon.png')
         self.mass = 1000
         self.idle_to_patrol = 500
 

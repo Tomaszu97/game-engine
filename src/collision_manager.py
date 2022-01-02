@@ -1,5 +1,5 @@
 from pygame        import Rect
-import shared
+from .shared        import *
 
 class Collision_Manager():
     def __init__(self):

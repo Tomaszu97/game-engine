@@ -5,7 +5,7 @@ from pygame.key        import *
 from pygame.sprite     import *
 from pygame.surface    import *
 from pygame.font       import *
-from shared            import *
+from .shared            import *
 import copy
 
 class ObjectType(Enum):
@@ -35,7 +35,7 @@ class GameObject(Sprite):
 
         # look related
         self.surface            =   Surface((0,0), pygame.SRCALPHA, 32)
-        self.font               =   Font('../data/fonts/test_font.otf', 10 )
+        self.font               =   Font(basedir + 'data/fonts/test_font.otf', 10)
 
         # size/position related
         self.rotation           =   0.0

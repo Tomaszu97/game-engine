@@ -1,10 +1,11 @@
-from game_object   import *
-from wall          import *
-from decoration    import *
+from .game_object   import *
+from .wall          import *
+from .shared        import *
+from .decoration    import *
 from math          import floor
 import xml.etree.ElementTree as et
 
-# TODO - optimize, this is slow as shit
+# TODO - optimize, this is really slow
 class TiledManager():
     def load_map(self, filename):
         tree = et.parse(filename)
@@ -22,11 +23,12 @@ class TiledManager():
 
         for obj in root:
             if obj.tag == 'tileset':
-                temptree    =   et.parse('../data/maps/'+obj.attrib['source'])
+                temptree    =   et.parse(basedir + 'data/maps/'+obj.attrib['source'])
                 temproot    =   temptree.getroot()
                 for item in temproot:
                     if item.tag == 'image':
-                        tileset         =   pygame.image.load('../data/images/' +  item.attrib['source'] ).convert_alpha()
+                        #TODO handle this path properly
+                        tileset         =   pygame.image.load(basedir + 'data/maps/dungeon_ v1.0/' +  item.attrib['source'] ).convert_alpha()
                         tilesetwidth    =   int(item.attrib['width'])
                         tilesetheight   =   int(item.attrib['height'])
 

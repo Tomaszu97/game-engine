@@ -1,5 +1,5 @@
-from game_object   import *
-from shared        import *
+from .game_object   import *
+from .shared        import *
 
 class Trapdoor(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
