@@ -4,7 +4,7 @@ from pygame.key        import *
 from pygame.sprite     import *
 from pygame.surface    import *
 from pygame.font       import *
-from .shared            import *
+from .shared           import *
 import copy
 
 # object types
@@ -38,9 +38,8 @@ class GameObject(Sprite):
         self.rotation           = 0.0
         self.position           = Vector2(position)
         self.size               = Vector2(0.0, 0.0)
-        self.hitbox_position    = Vector2(0.0, 0.0)
+        self.hitbox_offset      = Vector2(0.0, 0.0)
         self.hitbox_size        = Vector2(0.0, 0.0)
-        self.hitbox_offset      = 0.0
 
         # look related
         self.surface            = Surface((self.size[0],self.size[1]), pygame.SRCALPHA, 32)
@@ -86,8 +85,6 @@ class GameObject(Sprite):
         else:
             self.position += Vector2(firstarg, secondarg)
 
-        self.hitbox_position = self.position + Vector2(self.hitbox_offset, self.hitbox_offset)
-
     # update animation, position, speed, acceleration
     def every_tick(self):
         try:
@@ -112,8 +109,8 @@ class GameObject(Sprite):
 
             if display_borders:
                 draw.rect(self.surface, Color(255,255,0,255), Rect(0,0,self.size.x, self.size.y), 1)
-            if display_hitboxes:
-                draw.rect(self.surface, Color(255,0,0,255), Rect(self.hitbox_offset, self.hitbox_offset, self.hitbox_size.x, self.hitbox_size.y) , 1)
+            if display_hitboxes and self.layer == collision_layer:
+                draw.rect(self.surface, Color(255,0,0,255), Rect(self.hitbox_offset.x, self.hitbox_offset.y, self.hitbox_size.x, self.hitbox_size.y) , 1)
             if display_names:
                 self.surface.blit(self.font.render( self.name, False, Color(0,255,0,255), Color(0,0,255,80) ), (0,0))
             if display_velocity:
@@ -132,12 +129,10 @@ class GameObject(Sprite):
 
     def set_size(self, size):
         self.size = size
-        self.set_hitbox_offset(self.hitbox_offset)
+        self.set_scaled_hitbox_offset(self.hitbox_offset)
 
-    # set difference between object size and its hitbox
-    def set_hitbox_offset(self, offset):
-        self.hitbox_offset = offset
-        self.hitbox_position = self.position + Vector2(offset, offset)
+    def set_scaled_hitbox_offset(self, offset):
+        self.hitbox_offset = Vector2(offset, offset)
         self.hitbox_size = self.size - Vector2(2*offset, 2*offset)
 
     def set_animation_spritesheet_blank(self, color=Color(0,0,0,255)):
@@ -202,3 +197,7 @@ class GameObject(Sprite):
 
     def on_event(self):
         pass
+
+    @property
+    def hitbox_position(self):
+        return self.position + self.hitbox_offset

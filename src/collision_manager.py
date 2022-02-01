@@ -1,6 +1,7 @@
 from pygame        import Rect
 from .shared       import *
 from .game_object  import *
+import math
 
 class CollisionManager():
     #TODO first load the whole level ,then handle this stuff, otherwise race condition sometimes happens
@@ -42,28 +43,29 @@ class CollisionManager():
                     y_intersection = round(other_object.hitbox_position.y+other_object.hitbox_size.y-object.hitbox_position.y)
 
                 #TODO optimize it
+                #TODO make ceil round "up" for negatives as well
                 if abs(x_intersection) > abs(y_intersection):
                     if object.mass != 0:
-                        object.move(0, y_intersection*other_mass_ratio)
+                        object.move(0, math.ceil(y_intersection*other_mass_ratio))
                         if elastic:
                             object.movement_speed.y = sign(y_intersection)*abs(other_mass_ratio*total_speed.y)
                         else:
                             object.movement_speed.y = 0
                     if other_object.mass != 0:
-                        other_object.move(0, -y_intersection*mass_ratio)
+                        other_object.move(0, math.ceil(-y_intersection*mass_ratio))
                         if elastic:
                             other_object.movement_speed.y = -sign(y_intersection)*abs(mass_ratio*total_speed.y)
                         else:
                             other_object.movement_speed.y = 0
                 else:
                     if object.mass != 0:
-                        object.move(x_intersection*other_mass_ratio, 0)
+                        object.move(math.ceil(x_intersection*other_mass_ratio), 0)
                         if elastic:
                             object.movement_speed.x = sign(x_intersection)*abs(other_mass_ratio*total_speed.x)
                         else:
                             object.movement_speed.x = 0
                     if other_object.mass != 0:
-                        other_object.move(-x_intersection*mass_ratio, 0)
+                        other_object.move(math.ceil(-x_intersection*mass_ratio), 0)
                         if elastic:
                             other_object.movement_speed.x = -sign(x_intersection)*abs(mass_ratio*total_speed.x)
                         else:

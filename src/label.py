@@ -9,7 +9,7 @@ class Label(GameObject):
         self.animation_grid  = [1,1]
         self.animation_speed = 4
         self.set_animation_spritesheet(resources.label)
-        self.set_hitbox_offset(12)
+        self.set_scaled_hitbox_offset(12)
         self.layer = collision_layer
         self.text = 'label'
 

@@ -28,7 +28,7 @@ class Enemy(GameObject):
         # state related
         self.state_clock        = Clock()           # clock to measure time in states
         self.state_timer        = 0                 # time in actual state
-        self.idle_to_patrol     = 4000              # when to start patroling
+        self.idle_to_patrol     = 1000              # when to start patroling
         self.waypoint           = None              # waypoint used in patroling
         self.state              = self.idle         # current state of enemy
         self.attack_range       = 300
@@ -111,7 +111,7 @@ class Enemy(GameObject):
 
     # boosts speed for few seconds
     def speed_boost(self):
-        boost_multiplier = 3
+        boost_multiplier = 1.3
         distance = Vector2(self.target.position - self.position)
         distance = distance.normalize()
         self.movement_speed = distance * self.speed * boost_multiplier
@@ -134,7 +134,7 @@ class Enemy(GameObject):
         except ValueError:
             bullet.kill()
 
-        self.cooldown_time = 3000
+        self.cooldown_time = 1000
         self.state_timer = 0
         self.state = self.idle
 
@@ -167,8 +167,8 @@ class EnemyOrbiting(Enemy):
         super().__init__(parent, position, target_list)
 
         self.enemy_type = ORBITING
-        self.animation_grid = [2,2]
-        self.set_animation_spritesheet(basedir + 'data/images/konon2.png')
+        self.animation_grid = [1,1]
+        self.set_animation_spritesheet(basedir + 'data/images/konon.png')
         self.mass = 1000
         self.attack_list = [self.shoot]
 

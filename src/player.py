@@ -13,7 +13,7 @@ class Player(GameObject):
         self.mass = 700
         self.layer = collision_layer
         self.hitbox_size = Vector2(self.size.x, 5)
-        self.set_hitbox_offset(4)
+        self.set_scaled_hitbox_offset(4)
         self.animation_speed = 6
 
         # object specific
@@ -21,11 +21,11 @@ class Player(GameObject):
         self.bullet_clock = Clock()
         self.bullet_timer = 0
         self.bullet_delay = 150
-        self.speed              = 3
-        self.hp                 = 99999999999
+        self.speed              = 1.5
+        self.hp                 = 100
         self.mana               = 100
         self.contact_damage     = 0
-        self.damage             = 30
+        self.damage             = 25
 
         self.team = True
 
@@ -86,28 +86,28 @@ class Player(GameObject):
         # TODO remove those development features
         if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
             x = GameObject()
-            x.move(Vector2(pygame.mouse.get_pos() - (x.size/2) + camera_position))
+            x.move(Vector2(Vector2(pygame.mouse.get_pos())/window_scale - (x.size/2) + camera_position))
             self.bullet_timer = 0
 
         if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
             x = Wall()
-            x.move(Vector2(pygame.mouse.get_pos() - (x.size/2) + camera_position))
+            x.move(Vector2(Vector2(pygame.mouse.get_pos())/window_scale - (x.size/2) + camera_position))
             self.bullet_timer = 0
         # //
 
     def shoot(self):
         # create bullet in the middle of player
         bullet = Bullet(self)
-        #TODO think why its not /2
-        bullet.move(self.position + (self.size/4))
+        bullet.move(self.position + (self.size/2) - (bullet.size/2))
 
         # calculate where to shoot
-        shooting_direction = Vector2(pygame.mouse.get_pos() - (Vector2(window_size)/2))
+        shooting_direction = Vector2(pygame.mouse.get_pos() - (Vector2(window_size)*window_scale/2))
         shooting_direction = shooting_direction.normalize()
         try:
             bullet.movement_speed = shooting_direction*bullet.speed
-            q = Vector2()
-            q.from_polar(( self.hitbox_size.length()/2 + bullet.hitbox_size.length()/2,  shooting_direction.as_polar()[1]))
-            bullet.move(q)
+            #TODO delete this?
+            #q = Vector2()
+            #q.from_polar(( self.hitbox_size.length()/2 + bullet.hitbox_size.length()/2,  shooting_direction.as_polar()[1]))
+            #bullet.move(q)
         except ValueError:
             bullet.kill()

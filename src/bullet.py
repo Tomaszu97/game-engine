@@ -9,7 +9,7 @@ class Bullet(GameObject):
         self.animation_grid         =   [1,5]   #always before setting spritesheet
         self.animation_speed        =   4
         self.set_animation_spritesheet(resources.smallbullet)
-        self.set_hitbox_offset(3)
+        self.set_scaled_hitbox_offset(3)
         self.layer = collision_layer
         self.mass = 1
 

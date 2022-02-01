@@ -6,7 +6,7 @@ class Trapdoor(GameObject):
         super().__init__(parent, position)
         self.type = TRAPDOOR
         self.name = 'trapdoor'
-        self.layer = collision_layer
+        self.layer = collision_layer - 1
         self.animation_grid         =   [1,1]
         self.set_animation_spritesheet(resources.trapdoor)
         self.mass = 0
