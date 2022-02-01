@@ -10,6 +10,7 @@ from .enemy             import *
 from .tiled             import *
 from .collision_manager import *
 from .resource_handler  import *
+from .camera            import *
 from threading          import Thread
 import time
 import random
@@ -23,13 +24,13 @@ class App():
         self.children = []
         self.clock = Clock()
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (window_position[0], window_position[1])
-        self.final_surface = pygame.display.set_mode((window_size[0]*window_scale, window_size[1]*window_scale), HWSURFACE | DOUBLEBUF)
-        self.primary_surface = Surface((window_size[0], window_size[1]))
+        self.final_surface = pygame.display.set_mode((window_size[0], window_size[1]), HWSURFACE | DOUBLEBUF)
         self.collision_manager = CollisionManager()
         pygame.init()
         pygame.mixer.init()
         pygame.key.set_repeat(200,60)
         self.run()
+
 
     def handle_events(self, event):
         if event.type == pygame.QUIT:
@@ -40,36 +41,23 @@ class App():
 
     def loop(self):
         to_collide = []
-        for object in all_objects:
-            # w, h = pygame.display.get_surface().get_size()
-            # if not ( -object.size.x <= object.position.x <= w and -object.size.y <= object.position.y <= h ) and object.type != PLAYER:
-            #   object.kill()
+        for o in all_objects:
             try:
-                object.every_tick()
+                o.every_tick()
             except Exception as e:
                 print(e)
-            if object.layer == collision_layer or object.type == TRAPDOOR:
-                to_collide.append(object)
-
+            if o.layer == collision_layer or o.type == TRAPDOOR:
+                to_collide.append(o)
         self.collision_manager.handle_all_collisions(to_collide)
 
     def render(self):
-        self.primary_surface.fill(background_color)
-        try:
-            #TODO do better
-            if [obj for obj in all_objects if obj.type == PLAYER]:
-                camera_position.x, camera_position.y = [ ( obj.position.x - (window_size[0]/2) + (obj.size.x/2) , obj.position.y - (window_size[1]/2) + (obj.size.y/2) ) for obj in all_objects if obj.type == PLAYER ][0]
-
-            #draw object in layered order
-            for layer in range(min(object.layer for object in all_objects), max(object.layer for object in all_objects)+1):
-                for object in all_objects:
-                    if object.layer == layer:
-                        self.primary_surface.blit(object.surface, (object.position.x - camera_position.x, object.position.y - camera_position.y))
-        except Exception as e:
-            print(f'render loop issue:\n{e}')
-            pass
-
-        self.final_surface.blit(transform.scale(self.primary_surface, self.final_surface.get_rect().size), (0, 0))
+        for cam in cameras:
+            try:
+                #cam.render([ o for o in all_objects if o.ready])
+                cam.render(all_objects)
+                self.final_surface.blit(transform.scale(cam.surface, cam.window_size), (cam.window_position[0], cam.window_position[1]))
+            except Exception as e:
+                print(f'rendering issue: {e}')
         pygame.display.flip()
 
     def quit(self):

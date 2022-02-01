@@ -86,12 +86,12 @@ class Player(GameObject):
         # TODO remove those development features
         if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
             x = GameObject()
-            x.move(Vector2(Vector2(pygame.mouse.get_pos())/window_scale - (x.size/2) + camera_position))
+            x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
             self.bullet_timer = 0
 
         if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
             x = Wall()
-            x.move(Vector2(Vector2(pygame.mouse.get_pos())/window_scale - (x.size/2) + camera_position))
+            x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
             self.bullet_timer = 0
         # //
 
@@ -101,7 +101,7 @@ class Player(GameObject):
         bullet.move(self.position + (self.size/2) - (bullet.size/2))
 
         # calculate where to shoot
-        shooting_direction = Vector2(pygame.mouse.get_pos() - (Vector2(window_size)*window_scale/2))
+        shooting_direction = Vector2(pygame.mouse.get_pos() - (Vector2(window_size)/2))
         shooting_direction = shooting_direction.normalize()
         try:
             bullet.movement_speed = shooting_direction*bullet.speed

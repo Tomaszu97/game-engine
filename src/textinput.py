@@ -6,17 +6,14 @@ class TextInput(GameObject):
         super().__init__(parent, position)
         self.type            = TEXTINPUT
         self.name            = 'textinput'
-        self.animation_grid  = [1,1]
-        self.animation_speed = 1
         self.set_size(Vector2(200, 24))
         self.set_animation_spritesheet_blank(Color(0,0,255,0))
-        self.set_hitbox_offset(0)
         self.layer = collision_layer + 10
         self.bgcolor = (128,128,128,255)
 
         # object specific
         self.text       = '>'
-        self.text_font  = Font( basedir + '/data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 22)
+        self.text_font  = Font(basedir + '/data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 10)
         self.text_color = Color(0,255,0,255)
         self.active     = True
 

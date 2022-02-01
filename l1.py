@@ -42,4 +42,21 @@ finish_tr.move(1025, 200)
 finish_tr.reset()
 finish_tr.set_handler(finish_tr_h)
 
+big_camera = Camera()
+big_camera.world_size = Vector2(256,144)
+big_camera.move_world(30, -370)
+big_camera.window_size = Vector2(big_camera.world_size*6)
+
+small_camera = Camera()
+small_camera.world_size = Vector2(96,54)
+small_camera.move_world(30, -370)
+small_camera.window_size = Vector2(small_camera.world_size*6)
+small_camera.move_window(window_size[0]*2/3 - 12, window_size[1]*2/3 - 12)
+
+
+while app_running:
+    big_camera.world_position = pl.position + (pl.size/2) - (big_camera.world_size/2)
+    time.sleep(0.01)
+
+
 #code.interact(local=locals())
