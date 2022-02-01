@@ -4,6 +4,7 @@ from .player            import *
 from .spawner           import *
 from .decoration        import *
 from .label             import *
+from .textinput         import *
 from .shared            import *
 from .enemy             import *
 from .tiled             import *
@@ -72,13 +73,15 @@ class App():
         pygame.display.flip()
 
     def quit(self):
+        global app_running
         all_objects.clear()
-        self.app_running = False
+        app_running = False
         pygame.quit()
 
     def run(self):
-        self.app_running = True
-        while(self.app_running):
+        global app_running
+        app_running = True
+        while(app_running):
             self.loop()
             self.render()
             self.clock.tick(tick)
@@ -90,6 +93,6 @@ class App():
         exec(cmd)
 
 Thread(target=App).start()
-time.sleep(3)
-#while not app_running:
-#    pass
+while not app_running:
+    time.sleep(0.1)
+    print('initializing')
