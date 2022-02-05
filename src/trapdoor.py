@@ -7,8 +7,12 @@ class Trapdoor(GameObject):
         self.type = TRAPDOOR
         self.name = 'trapdoor'
         self.layer = collision_layer - 1
-        self.animation_grid         =   [1,1]
-        self.set_animation_spritesheet(resources.trapdoor)
+        self.animation_grid = [1,1]
+        global debug
+        if debug:
+            self.set_animation_spritesheet(resources.trapdoor)
+        else:
+            self.set_animation_spritesheet_blank(Color(0,0,0,0))
         self.mass = 0
 
         # object specific
@@ -16,11 +20,10 @@ class Trapdoor(GameObject):
         self.handler = self.default_handler
 
     # runs when player enters trapdoor
-    def trap_trigger(self, object, other_object):
-        if self.triggered:
-            return
-        self.triggered = True
-        self.handler()
+    def trap_trigger(self, other_obj):
+        if not self.triggered:
+            self.triggered = True
+            self.handler(self, other_obj)
 
     # resets trapdoor
     def reset(self):
@@ -31,5 +34,5 @@ class Trapdoor(GameObject):
         self.handler = handler
 
     # default trapdoor handler
-    def default_handler(self):
+    def default_handler(self, obj, other_obj):
         print('TRAPDOOR: default trapdoor handler triggered')

@@ -23,7 +23,9 @@ class Enemy(GameObject):
         self.hp = 100
         self.speed = 1
         self.sight_radius = 400
-        self.damage = 5
+        self.damage = 7
+        #TODO implement contact damage with delay
+        self.contact_damage = 0
 
         # state related
         self.state_clock        = Clock()           # clock to measure time in states
@@ -122,6 +124,7 @@ class Enemy(GameObject):
     # shoots a bullet every 'cooldown_time' seconds
     def shoot(self):
         bullet = Bullet(self)
+        bullet.damage = self.damage
         bullet.move((self.position+(self.size/2) - bullet.size/2))
 
         shooting_direction = Vector2(self.target.position) -  (self.position)

@@ -7,7 +7,9 @@ basedir          = os.path.dirname(basedir) + '/'
 cameras          = []
 all_objects      = []
 event_receiver_objects = []
+mouseclick_receiver_objects = []
 app_running      = False
+app_instance     = None
 resources        = ImageController() #TODO better resource management
 for filename in os.listdir(basedir + 'data/images/'):
     print(filename)
@@ -30,3 +32,4 @@ display_names    = False
 display_velocity = False
 collision_layer  = 4
 slowdown_factor  = 0.99
+debug            = False

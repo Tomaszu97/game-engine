@@ -37,13 +37,13 @@ class GameObject(Sprite):
         # size/position related
         self.rotation           = 0.0
         self.position           = Vector2(position)
-        self.size               = Vector2(0.0, 0.0)
+        self._size              = Vector2(0.0, 0.0)
         self.hitbox_offset      = Vector2(0.0, 0.0)
         self.hitbox_size        = Vector2(0.0, 0.0)
 
         # look related
         self.surface            = Surface((self.size[0],self.size[1]), pygame.SRCALPHA, 32)
-        self.font               = Font(basedir + '/data/fonts/terminus-ttf-4.49.1/TerminusTTF-4.49.1.ttf', 10)
+        self.font               = Font(basedir + '/data/fonts/m5x7.ttf', 16)
         self.bgcolor            = Color(0,0,0,0)
 
         # movement related
@@ -128,9 +128,19 @@ class GameObject(Sprite):
 
     ## SIZE AND HITBOX ##
 
+    #TODO get rid of this
     def set_size(self, size):
-        self.size = size
+        self._size = size
         self.set_scaled_hitbox_offset(self.hitbox_offset)
+
+    @property
+    def size(self):
+        return self._size
+
+    @size.setter
+    def size(self, value):
+        self._size = value
+        self.set_animation_spritesheet_blank(self.bgcolor)
 
     def set_scaled_hitbox_offset(self, offset):
         self.hitbox_offset = Vector2(offset, offset)

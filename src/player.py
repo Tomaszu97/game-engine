@@ -2,6 +2,7 @@ from .game_object   import *
 from .wall          import *
 from .bullet        import *
 from .shared        import *
+from .progressbar   import *
 
 class Player(GameObject):
     def __init__(self, parent = None, position = Vector2(0.0, 0.0)):
@@ -18,23 +19,36 @@ class Player(GameObject):
 
         # object specific
         #TODO: add formulas for attack damage
-        self.bullet_clock = Clock()
-        self.bullet_timer = 0
-        self.bullet_delay = 150
-        self.speed              = 1.5
-        self.hp                 = 100
-        self.mana               = 100
-        self.contact_damage     = 0
-        self.damage             = 25
-
+        self.bullet_clock    = Clock()
+        self.bullet_timer    = 0
+        self.bullet_delay    = 400
+        self.speed           = 1.5
+        self.max_hp          = 100
+        self.max_mana        = 100
+        self._hpbar          = ProgressBar()
+        self._hpbar.size     = Vector2(self.size.x + 4, 5)
+        self._manabar        = ProgressBar()
+        self._manabar.size   = Vector2(self.size.x + 4, 5)
+        self._manabar.fg_color = Color(92, 108, 156,255)
+        self._manabar.bg_color = Color(108, 139, 164,255)
+        self.hp             = self.max_hp
+        self.mana           = self.max_mana
+        self.contact_damage = 0
+        self.damage         = 10
         self.team = True
 
     def every_tick(self):
+        global debug
+        if debug:
+            print(f'player pos: {self.position}')
+        #TODO remove this - using mana bar as bullet reloading bar
+        self._manabar.progress = self.bullet_timer/self.bullet_delay
+        self._hpbar.position = self.position + Vector2(-2, -6)
+        self._manabar.position = self.position + Vector2(-2, -12)
         self.bullet_clock.tick()
         self.bullet_timer += self.bullet_clock.get_time()
         self.handle_input()
         return super().every_tick()
-
 
     def handle_input(self):
         pressed = pygame.key.get_pressed()
@@ -62,14 +76,6 @@ class Player(GameObject):
             self.change_animation_track(3)
             any = True
 
-        if pressed[pygame.K_o]:
-            self.change_animation_track(4)
-            any=True
-
-        if pressed[pygame.K_p]:
-            self.change_animation_track(5)
-            any=True
-
         if speed_vector != (0, 0):
             speed_vector = speed_vector.normalize() * self.speed
         self.movement_speed = speed_vector
@@ -83,16 +89,17 @@ class Player(GameObject):
             self.shoot()
             self.bullet_timer = 0
 
-        # TODO remove those development features
-        if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
-            x = GameObject()
-            x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
-            self.bullet_timer = 0
+        global debug
+        if debug:
+            if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
+                x = GameObject()
+                x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
+                self.bullet_timer = 0
 
-        if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
-            x = Wall()
-            x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
-            self.bullet_timer = 0
+            if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
+                x = Wall()
+                x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
+                self.bullet_timer = 0
         # //
 
     def shoot(self):
@@ -111,3 +118,21 @@ class Player(GameObject):
             #bullet.move(q)
         except ValueError:
             bullet.kill()
+
+    @property
+    def hp(self):
+        return self._hp
+
+    @hp.setter
+    def hp(self, value):
+        self._hp = value
+        self._hpbar.progress = self._hp/self.max_hp
+
+    @property
+    def mana(self):
+        return self._mana
+
+    @mana.setter
+    def mana(self, value):
+        self._mana = value
+        self._manabar.progress = self._mana/self.max_mana

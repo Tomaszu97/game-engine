@@ -11,6 +11,8 @@ from .tiled             import *
 from .collision_manager import *
 from .resource_handler  import *
 from .camera            import *
+from .button            import *
+from .progressbar       import *
 from threading          import Thread
 import time
 import random
@@ -29,12 +31,27 @@ class App():
         pygame.init()
         pygame.mixer.init()
         pygame.key.set_repeat(200,60)
-        self.run()
 
+        pygame.display.set_caption('DING')
+        Icon = pygame.image.load(basedir + '/data/images/crate.png')
+        pygame.display.set_icon(Icon)
+
+        global app_instance
+        app_instance = self
+        self.run()
 
     def handle_events(self, event):
         if event.type == pygame.QUIT:
             self.quit()
+        elif event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            global cameras
+            if cameras:
+                pos = cameras[0].trans_wind_to_world_pos(pos[0], pos[1])
+            global mouseclick_receiver_objects
+            for o in mouseclick_receiver_objects:
+                if Rect(o.position, o.size).collidepoint(pos):
+                    o.on_click()
         else:
             for x in event_receiver_objects:
                 x.on_event(event, self)
@@ -51,18 +68,21 @@ class App():
         self.collision_manager.handle_all_collisions(to_collide)
 
     def render(self):
+        global cameras
         for cam in cameras:
             try:
-                #cam.render([ o for o in all_objects if o.ready])
-                cam.render(all_objects)
-                self.final_surface.blit(transform.scale(cam.surface, cam.window_size), (cam.window_position[0], cam.window_position[1]))
+                cam.render([ o for o in all_objects if o.ready])
+                self.final_surface.blit(transform.scale(cam.surface, (int(cam.window_size[0]), int(cam.window_size[1]))), (int(cam.window_position[0]), int(cam.window_position[1])))
             except Exception as e:
                 print(f'rendering issue: {e}')
         pygame.display.flip()
 
     def quit(self):
-        global app_running
+        global all_objects
         all_objects.clear()
+        global cameras
+        cameras.clear()
+        global app_running
         app_running = False
         pygame.quit()
 
@@ -77,8 +97,6 @@ class App():
             for event in pygame.event.get():
                 self.handle_events(event)
 
-    def exec(self, cmd):
-        exec(cmd)
 
 Thread(target=App).start()
 while not app_running:

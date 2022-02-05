@@ -4,123 +4,119 @@ from .game_object  import *
 import math
 
 class CollisionManager():
-    #TODO first load the whole level ,then handle this stuff, otherwise race condition sometimes happens
+    #TODO confirmed race condition -  wait for obj readiness
     def __init__(self):
         # collision handlers
 
         # elastic collision
-        def BNC(object, other_object, elastic=True):
+        def BNC(obj, othr_obj, elastic=True):
             sign = lambda x: 1 if x>=0 else -1
 
-            # return if object width or height is 0
-            if other_object.hitbox_size.x == 0 or other_object.hitbox_size.y == 0:
+            # return if obj width or height is 0
+            if othr_obj.hitbox_size.x == 0 or othr_obj.hitbox_size.y == 0:
                 return
 
             # move them away and collide
-            if Rect(object.hitbox_position, object.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
-                relative_position = object.position + (object.size/2) - other_object.position - (other_object.size/2)
-                total_speed = object.movement_speed + other_object.movement_speed
+            if Rect(obj.hitbox_position, obj.hitbox_size).colliderect(Rect(othr_obj.hitbox_position, othr_obj.hitbox_size)):
+                relative_position = obj.position + (obj.size/2) - othr_obj.position - (othr_obj.size/2)
+                total_speed = obj.movement_speed + othr_obj.movement_speed
 
-                if object.mass == 0 or other_object.mass == 0:
+                if obj.mass == 0 or othr_obj.mass == 0:
                     mass_ratio = 1
                     other_mass_ratio = 1
                 else:
-                    mass_ratio = object.mass / (object.mass+other_object.mass)
-                    other_mass_ratio = other_object.mass / (object.mass+other_object.mass)  
+                    mass_ratio = obj.mass / (obj.mass+othr_obj.mass)
+                    other_mass_ratio = othr_obj.mass / (obj.mass+othr_obj.mass)  
 
                 # relpos from other to me
                 if relative_position.x < 0:
                     # self approach from the left
-                    x_intersection = -round(object.hitbox_position.x+object.hitbox_size.x-other_object.hitbox_position.x)
+                    x_intersection = -round(obj.hitbox_position.x+obj.hitbox_size.x-othr_obj.hitbox_position.x)
                 else:
                     # self approach from the right
-                    x_intersection = round(other_object.hitbox_position.x+other_object.hitbox_size.x-object.hitbox_position.x)
+                    x_intersection = round(othr_obj.hitbox_position.x+othr_obj.hitbox_size.x-obj.hitbox_position.x)
                 if relative_position.y < 0:
                     # self approach from above
-                    y_intersection = -round(object.hitbox_position.y+object.hitbox_size.y-other_object.hitbox_position.y)
+                    y_intersection = -round(obj.hitbox_position.y+obj.hitbox_size.y-othr_obj.hitbox_position.y)
                 else:
                     # self approach from below
-                    y_intersection = round(other_object.hitbox_position.y+other_object.hitbox_size.y-object.hitbox_position.y)
+                    y_intersection = round(othr_obj.hitbox_position.y+othr_obj.hitbox_size.y-obj.hitbox_position.y)
 
                 #TODO optimize it
-                #TODO make ceil round "up" for negatives as well
+                def double_sided_floor(value):
+                    if value < 0:
+                        return math.ceil(value)
+                    else:
+                        return math.floor(value)
+
                 if abs(x_intersection) > abs(y_intersection):
-                    if object.mass != 0:
-                        object.move(0, math.ceil(y_intersection*other_mass_ratio))
+                    if obj.mass != 0:
+                        obj.move(0, double_sided_floor(y_intersection*other_mass_ratio))
                         if elastic:
-                            object.movement_speed.y = sign(y_intersection)*abs(other_mass_ratio*total_speed.y)
+                            obj.movement_speed.y = sign(y_intersection)*abs(other_mass_ratio*total_speed.y)
                         else:
-                            object.movement_speed.y = 0
-                    if other_object.mass != 0:
-                        other_object.move(0, math.ceil(-y_intersection*mass_ratio))
+                            obj.movement_speed.y = 0
+                    if othr_obj.mass != 0:
+                        othr_obj.move(0, double_sided_floor(-y_intersection*mass_ratio))
                         if elastic:
-                            other_object.movement_speed.y = -sign(y_intersection)*abs(mass_ratio*total_speed.y)
+                            othr_obj.movement_speed.y = -sign(y_intersection)*abs(mass_ratio*total_speed.y)
                         else:
-                            other_object.movement_speed.y = 0
+                            othr_obj.movement_speed.y = 0
                 else:
-                    if object.mass != 0:
-                        object.move(math.ceil(x_intersection*other_mass_ratio), 0)
+                    if obj.mass != 0:
+                        obj.move(double_sided_floor(x_intersection*other_mass_ratio), 0)
                         if elastic:
-                            object.movement_speed.x = sign(x_intersection)*abs(other_mass_ratio*total_speed.x)
+                            obj.movement_spaaaaeed.x = sign(x_intersection)*abs(other_mass_ratio*total_speed.x)
                         else:
-                            object.movement_speed.x = 0
-                    if other_object.mass != 0:
-                        other_object.move(math.ceil(-x_intersection*mass_ratio), 0)
+                            obj.movement_speed.x = 0
+                    if othr_obj.mass != 0:
+                        othr_obj.move(double_sided_floor(-x_intersection*mass_ratio), 0)
                         if elastic:
-                            other_object.movement_speed.x = -sign(x_intersection)*abs(mass_ratio*total_speed.x)
+                            othr_obj.movement_speed.x = -sign(x_intersection)*abs(mass_ratio*total_speed.x)
                         else:
-                            other_object.movement_speed.x = 0
+                            othr_obj.movement_speed.x = 0
 
         # inelastic collision
-        def HIT(object, other_object):
-            return BNC(object, other_object, elastic=False)
+        def HIT(obj, othr_obj):
+            return BNC(obj, othr_obj, elastic=False)
 
-        # take damage - first object takes damage
-        def TDM(object, other_object):
+        # take damage - first obj takes damage
+        def TDM(obj, othr_obj):
             try:
-                object.hp -= other_object.damage
-                if object.hp < 0:
-                    object.kill()
-            except AttributeError:
-                return
+                obj.hp -= othr_obj.damage
+                if obj.hp < 0:
+                    obj.kill()
+                if othr_obj.type == BULLET:
+                    othr_obj.kill()
+            except AttributeError as e:
+                print(e)
 
-        # make damage - second object takes damage
-        def MDM(object, other_object):
-            return TDM(other_object, object)
+        # make damage - second obj takes damage
+        def MDM(obj, othr_obj):
+            return TDM(othr_obj, obj)
 
         # kill yourself
-        def KYS(object, other_object):
-            object.kill()
+        def KYS(obj, othr_obj):
+            obj.kill()
 
         # kill him
-        def KHM(object, other_object):
-            return KYS(other_object, object)
+        def KHM(obj, othr_obj):
+            return KYS(othr_obj, obj)
 
-        # teamwork - stop processing collision if both objects are in the same team
-        def TMW(object, other_object):
+        # teamwork - stop processing collision if both objs are in the same team
+        def TMW(obj, othr_obj):
             # stop processing collision if both are in the same team
-            if object.team == other_object.team:
+            if obj.team == othr_obj.team:
                 return False
 
         # call trapdoor handler if trapdoor is not triggered
-        def TRP(object, other_object):
+        def TRP(obj, othr_obj):
             # optimize it - maybe take advantage of collision order (higher first)
-            if object.type == TRAPDOOR:
-                trapdoor = object
-            else:
-                trapdoor = other_object
-            if not trapdoor.triggered:
-                trapdoor.triggered = True
-                trapdoor.handler()
-
-        # bullet kys - kill a bullet
-        def BKS(object, other_object):
-            # optimize it
-            if object.type == BULLET:
-                bullet = object
-            else:
-                bullet = other_object
-            bullet.kill()  
+            if obj.type != TRAPDOOR:
+                obj, othr_obj = othr_obj, obj
+            if not obj.triggered:
+                obj.triggered = True
+                obj.handler(obj, othr_obj)
 
         # matrix defining collision behavior
         self.collision_matrix = [
@@ -128,39 +124,39 @@ class CollisionManager():
         [ [HIT],                                                                                                                             ],# NULL
         [ [HIT],    None,                                                                                                                    ],# PLAYER
         [ None,     None,          None,                                                                                                     ],# ALLY
-        [ None,     [HIT,MDM],     [HIT,MDM],     None,                                                                                      ],# ENEMY
+        [ None,     [HIT],         [HIT],         None,                                                                                      ],# ENEMY
         [ None,     None,          None,          None,          None,                                                                       ],# SPAWNER
-        [ None,     [TMW,MDM,BKS], [TMW,MDM,BKS], [TMW,MDM,BKS], None,    None,                                                              ],# BULLET
+        [ None,     [TMW,MDM],     [TMW,MDM],     [TMW,MDM],     None,    None,                                                              ],# BULLET
         [ None,     [HIT],         [HIT],         None,          None,    None,  None,                                                       ],# CONTAINER
         [ None,     None,          None,          None,          None,    None,  None,     None,                                             ],# DECORATION
         [ None,     None,          None,          None,          None,    None,  None,     None,        None,                                ],# LABEL
         [ [HIT],    [HIT],         [HIT],         [HIT],         None,    [BNC], [HIT],    None,        None, None,                          ],# WALL
-        [ None,     [TRP],         None,          None,          None,    None,  None,     None,        None, None, None,                    ],# TRAPDOOR
+        [ None,     [TRP],         None,          None,          None,    None,  [TRP],    None,        None, None, None,                    ],# TRAPDOOR
         [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,           ],# DIALOG
         [ None,     None,          None,          None,          None,    None,  None,     None,        None, None, None,    None,  None,    ],# TEXTINPUT
         ]
 
-    def get_on_collide(self, object, other_object):
+    def get_on_collide(self, obj, othr_obj):
         #TODO - handle invincibility
         # if self.is_invincible:
-        #   self.process_collision[str(object.type.name)][:-1]
-        srt = sorted([object.type, other_object.type], reverse=True)
+        #   self.process_collision[str(obj.type.name)][:-1]
+        srt = sorted([obj.type, othr_obj.type], reverse=True)
         return self.collision_matrix[srt[0]][srt[1]]
 
-    def handle_collision(self, object, other_object):
-        functions = self.get_on_collide(object, other_object)
+    def handle_collision(self, obj, othr_obj):
+        functions = self.get_on_collide(obj, othr_obj)
         if functions:
-            if Rect(object.hitbox_position, object.hitbox_size).colliderect(Rect(other_object.hitbox_position, other_object.hitbox_size)):
+            if Rect(obj.hitbox_position, obj.hitbox_size).colliderect(Rect(othr_obj.hitbox_position, othr_obj.hitbox_size)):
                 for function in functions:
-                    srt = sorted([object, other_object], key=lambda x: x.type, reverse=True)  # pass object with higher type number as first parameter
+                    srt = sorted([obj, othr_obj], key=lambda x: x.type, reverse=True)  # pass obj with higher type number as first parameter
                     if function(srt[0], srt[1]) is False: break                               # break when one of the handlers returns False
                 return True
         return False
 
     #TODO optimize it
     def handle_all_collisions(self, to_collide):
-        for object in to_collide:
-            for other_object in to_collide:
-                if object is not other_object:
-                    self.handle_collision(object, other_object)
+        for obj in to_collide:
+            for othr_obj in to_collide:
+                if obj is not othr_obj:
+                    self.handle_collision(obj, othr_obj)
 
