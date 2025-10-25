@@ -19,5 +19,5 @@ This is how it looks at the moment:
 python -m venv venv
 pip install -r requirements.txt
 source venv/bin/activate
-python menu.py
+python main.py
 ```

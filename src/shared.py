@@ -56,7 +56,6 @@ class GlobalObjects:
 # untouchables
 basedir          = os.path.abspath(os.path.dirname(__file__)) #TODO improve basedir handling
 basedir          = os.path.dirname(basedir) + '/'
-app_running      = False
 app_instance     = None
 resources        = ImageController() #TODO better resource management
 for filename in os.listdir(basedir + 'data/images/'):

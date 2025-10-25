@@ -47,7 +47,6 @@ class App():
             pos = pygame.mouse.get_pos()
             if GlobalObjects().cameras:
                 pos = GlobalObjects().cameras[0].trans_wind_to_world_pos(pos[0], pos[1])
-                print(f'mousepos: {pos}')
             for o in GlobalObjects().mouseclick_receiver_objects:
                 if Rect(o.position, o.size).collidepoint(pos):
                     o.on_click()
@@ -77,14 +76,12 @@ class App():
 
     def quit(self):
         GlobalObjects().clear_all()
-        global app_running
-        app_running = False
+        self.app_running = False
         pygame.quit()
 
     def run(self):
-        global app_running
-        app_running = True
-        while(app_running):
+        self.app_running = True
+        while(self.app_running):
             self.loop()
             self.render()
             self.clock.tick(tick)
@@ -92,8 +89,13 @@ class App():
             for event in pygame.event.get():
                 self.handle_events(event)
 
-
 Thread(target=App).start()
-while not app_running:
+
+global app_instance
+while not app_instance:
     time.sleep(0.1)
+    print('waiting for app instance...')
+while not app_instance.app_running:
+    time.sleep(0.1)
+    print('waiting for app running...')
     print('initializing')
