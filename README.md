@@ -13,3 +13,11 @@ Simple game engine written in python with pygame library.
   
 This is how it looks at the moment:  
 ![image missing](doc/3.png)  
+
+### How to run?
+```
+python -m venv venv
+pip install -r requirements.txt
+source venv/bin/activate
+python menu.py
+```
