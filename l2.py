@@ -1,4 +1,3 @@
-from cgitb import small
 from src.main import *
 
 TiledManager().load_map(basedir + 'data/maps/level2.tmx')
