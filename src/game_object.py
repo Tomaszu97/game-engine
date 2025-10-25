@@ -70,8 +70,7 @@ class GameObject(Sprite):
         # append object to children list and all object list
         if self.parent != None:
             self.parent.children.append(self)
-        global all_objects
-        all_objects.append(self)
+        GlobalObjects().all_objects.append(self)
 
         # initial look
         self.set_animation_spritesheet(resources.smallcrate)
@@ -182,10 +181,10 @@ class GameObject(Sprite):
 
     # delete object
     def kill(self):
+        GlobalObjects().remove(self)
         try:
             if self.parent != None:
                 self.parent.children.remove(self)
-            all_objects.remove(self)
         except ValueError:
             return
 

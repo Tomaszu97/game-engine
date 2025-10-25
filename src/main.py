@@ -45,20 +45,19 @@ class App():
             self.quit()
         elif event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
-            global cameras
-            if cameras:
-                pos = cameras[0].trans_wind_to_world_pos(pos[0], pos[1])
-            global mouseclick_receiver_objects
-            for o in mouseclick_receiver_objects:
+            if GlobalObjects().cameras:
+                pos = GlobalObjects().cameras[0].trans_wind_to_world_pos(pos[0], pos[1])
+                print(f'mousepos: {pos}')
+            for o in GlobalObjects().mouseclick_receiver_objects:
                 if Rect(o.position, o.size).collidepoint(pos):
                     o.on_click()
         else:
-            for x in event_receiver_objects:
+            for x in GlobalObjects().event_receiver_objects:
                 x.on_event(event, self)
 
     def loop(self):
         to_collide = []
-        for o in all_objects:
+        for o in GlobalObjects().all_objects:
             try:
                 o.every_tick()
             except Exception as e:
@@ -68,20 +67,16 @@ class App():
         self.collision_manager.handle_all_collisions(to_collide)
 
     def render(self):
-        global cameras
-        for cam in cameras:
+        for cam in GlobalObjects().cameras:
             try:
-                cam.render([ o for o in all_objects if o.ready])
+                cam.render([ o for o in GlobalObjects().all_objects if o.ready])
                 self.final_surface.blit(transform.scale(cam.surface, (int(cam.window_size[0]), int(cam.window_size[1]))), (int(cam.window_position[0]), int(cam.window_position[1])))
             except Exception as e:
                 print(f'rendering issue: {e}')
         pygame.display.flip()
 
     def quit(self):
-        global all_objects
-        all_objects.clear()
-        global cameras
-        cameras.clear()
+        GlobalObjects().clear_all()
         global app_running
         app_running = False
         pygame.quit()

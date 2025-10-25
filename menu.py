@@ -15,8 +15,7 @@ start_button.text_color = Color(227, 191, 95)
 start_button.bg_color = Color(148, 129, 110)
 start_button.text = '  start game'
 def start_handler():
-    global all_objects
-    all_objects.clear()
+    GlobalObjects().clear_all()
     pygame.mixer.music.stop()
     import l1
 

@@ -40,7 +40,6 @@ w2.move(-219, -504)
 w2.set_size( Vector2(8, 3) )
 w2.set_animation_spritesheet_blank(Color(0,0,0,0))
 
-
 w3 = GameObject()
 w3.mass = 0
 w3.move(-244, -518)
@@ -66,7 +65,6 @@ shooting_pos_tr.set_handler(shooting_pos_tr_h)
 #TODO finish on enemy killed
 en = EnemyFollowing(target_list = [pl], position = Vector2(-495, -875))
 #pl.position = Vector2(-520, 875)
-
 
 while True:
     lastbullet = None

@@ -9,8 +9,7 @@ class Camera():
         self._world_size = Vector2(200,100)
         self.surface = Surface((self._world_size.x, self._world_size.y))
         self.obj_to_follow = None
-        global cameras
-        cameras.append(self)
+        GlobalObjects().cameras.append(self)
 
     def move_window(self, x, y):
         self.window_position[0] += x
@@ -32,9 +31,9 @@ class Camera():
         if self.obj_to_follow is not None:
             self.world_position = self.obj_to_follow.position + (self.obj_to_follow.size/2) - (self.world_size/2)
         self.surface.fill(background_color)
-        if all_objects:
-            for layer in range(min(o.layer for o in all_objects), max(o.layer for o in all_objects)+1):
-                for o in all_objects:
+        if GlobalObjects().all_objects:
+            for layer in range(min(o.layer for o in GlobalObjects().all_objects), max(o.layer for o in GlobalObjects().all_objects)+1):
+                for o in GlobalObjects().all_objects:
                     if o.layer == layer:
                         self.surface.blit(o.surface, (o.position.x - self.world_position.x, o.position.y - self.world_position.y))
 

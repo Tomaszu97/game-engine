@@ -93,12 +93,12 @@ class Player(GameObject):
         if debug:
             if mouse_pressed[2] and self.bullet_timer > self.bullet_delay:
                 x = GameObject()
-                x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
+                x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + GlobalObjects().cameras[0].world_position))
                 self.bullet_timer = 0
 
             if mouse_pressed[1] and self.bullet_timer > self.bullet_delay:
                 x = Wall()
-                x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + cameras[0].world_position))
+                x.move(Vector2(Vector2(pygame.mouse.get_pos())/6 - (x.size/2) + GlobalObjects().cameras[0].world_position))
                 self.bullet_timer = 0
         # //
 

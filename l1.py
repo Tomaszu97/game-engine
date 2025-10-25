@@ -1,18 +1,23 @@
 from src.main import *
 
 def first_enemy_tr_h(trap, prey):
+    return
     EnemyFollowing(target_list = [pl], position = Vector2(135, -150))
 
 def runner_enemy_tr_h(trap, prey):
+    return
     EnemyFollowing(target_list = [pl], position = Vector2(15, -12))
 
 def runner_enemy_2_tr_h(trap, prey):
+    return
     EnemyFollowing(target_list = [pl], position = Vector2(335, 40))
 
 def runner_enemy_3_tr_h(trap, prey):
+    return
     EnemyFollowing(target_list = [pl], position = Vector2(430, 340))
 
 def runner_enemy_4_tr_h(trap, prey):
+    return
     EnemyFollowing(target_list = [pl], position = Vector2(865, 245))
     EnemyFollowing(target_list = [pl], position = Vector2(995, 245))
     EnemyFollowing(target_list = [pl], position = Vector2(895, 190))
@@ -39,10 +44,10 @@ def info_message_tr_start(trap, prey):
     bt.position = Vector2(-57,-365)
     bt.size = Vector2(23,15)
     bt.text = ' ok'
-            
+
     pl.speed = 0
     pl.bullet_delay = float('inf')
-    
+
     def bthandler():
         if 'WSAD' not in la.text:
             la.size = Vector2(la.size.x, la.size.y+20)
@@ -123,9 +128,9 @@ finish_tr.position = Vector2(1045, 170)
 finish_tr.size = Vector2(50,100)
 finish_tr.set_scaled_hitbox_offset(0)
 def finish_tr_h(trap, prey):
-    global all_objects
-    all_objects.clear()
+    GlobalObjects().all_objects.clear()
     pygame.mixer.music.stop()
+    import l2
 finish_tr.set_handler(finish_tr_h)
 
 big_camera = Camera()
